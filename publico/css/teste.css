@@ -1,0 +1,75 @@
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 12px;
+    font-style: normal;
+    line-height: normal;
+}
+
+p.small {
+    text-align: center;
+    line-height: 30%;
+}
+
+p.smallgreen {
+    text-align: center;
+    line-height: 30%;
+    font-size: 10px;
+    font-weight: normal;
+    color: #006633;
+}
+
+p.smallred {
+    text-align: center;
+    line-height: 80%;
+    font-size: 10px;
+    font-weight: bold;
+    color: #E00000;
+}
+
+p.xsmall {
+    text-align: left;
+    line-height: 30%;
+    font-size: 8px;
+}
+
+th.dados {
+    background-color:#CCCCCC;
+    text-align: center;
+}
+
+tr.dados {
+    background-color:#FFFF99;
+}
+
+tr.cancel {
+    background-color:#FF33FF;
+}
+
+td.center {
+    text-align: center;
+}
+
+td.left {
+    text-align: left;
+}
+
+td.right {
+    text-align: right;
+}
+
+div.left {
+    float: left;
+    width:400px;
+}
+
+div.right{
+    float: right;
+    width:400px;
+}
+
+.container{
+    margin-left: auto;
+    margin-right: auto;
+    width: 80%;    
+}

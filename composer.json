@@ -1,0 +1,27 @@
+{
+    "name": "movimento",
+    "version":"1.0.0-dev",
+    "type": "project",
+    "description": "Moviento de NFe",
+    "license": [
+        "LGPL-3.0+"
+    ],
+    "authors": [
+        {
+            "name": "Roberto L. Machado",
+            "email": "linux.rlm@gmail.com.br",
+            "homepage": "http://www.nfephp.org",
+            "role": "Developer"    
+        }    
+    ],
+    "require": {
+        "php": ">=5.3.0",
+        "nfephp-org/nfephp": "dev-develop"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/"
+        }
+    },
+    "minimum-stability": "stable"
+}
