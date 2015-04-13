@@ -12,6 +12,9 @@ class Dados
     public static function extrai($aList, $cnpj = '')
     {
         $aResp = array();
+        $totFat = 0;
+        $totPeso = 0;
+        $totIcms = 0;
         foreach ($aList as $file) {
             $dom = null;
             $ide = null;
@@ -23,7 +26,7 @@ class Dados
             $emit = $dom->getNode('emit');
             $dest = $dom->getNode('dest');
             $icmsTot = $dom->getNode('ICMSTot');
-            $infAdic = $dom->getNode('infAdic');
+            $vol = $dom->getNode('vol');
             $cStat = $dom->getNodeValue('cStat');
             if ($cStat != '100') {
                 self::$nCanc++;
@@ -37,8 +40,8 @@ class Dados
             $destRazao = $dom->getValue($dest, 'xNome');
             $vNF = $dom->getValue($icmsTot, 'vNF');
             $vNFtext = 'R$ '.number_format($vNF, '2', ',', '.');
-            $nome = $emitRazao;
             $serie = $dom->getNodeValue('serie');
+            $nome = $emitRazao;
             if ($emitCNPJ == $cnpj) {
                 $nome = $destRazao;
             }
@@ -55,6 +58,18 @@ class Dados
             if (substr($email, 0, 1) == ';') {
                 $email = substr($email, 1, strlen($email)-1);
             }
+            $vICMS = $dom->getValue($icmsTot, 'vICMS');
+            $totIcms += $vICMS;
+            $valorFat = 0;
+            if ($vICMS != 0) {
+                $valorFat = $vNF;
+            }
+            $totFat += $valorFat;
+            $pesoL = $dom->getValue($vol, 'pesoL');
+            if ($pesoL != '') {
+                $totPeso += $pesoL;
+            }
+            
             $aResp[] = array(
                 'nNF' => $dom->getValue($ide, 'nNF'),
                 'serie' => $serie,
@@ -66,6 +81,11 @@ class Dados
                 'email' => $email
             );
         }
-        return $aResp;
+        return array(
+            'totFat' => $totFat,
+            'totPeso' => $totPeso,
+            'totIcms' => $totIcms,
+            'aNF' => $aResp
+        );
     }
 }

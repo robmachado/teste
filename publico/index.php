@@ -56,7 +56,12 @@ $selMeses .= "</select>\n";
 $chkAprovadas = '';
 $chkEnviadas = '';
 $chkRecebidas = '';
-$aDados = array();
+$aDados = array(
+    'totFat' => 0,
+    'totPeso' => 0,
+    'totIcms' => 0,
+    'aNF' => array()
+);
 //caso tenha sido passados os dados
 $dias = Dates::diasUteis(date('m'), date('Y'));
 $hoje = date('d/m/Y');
@@ -77,10 +82,11 @@ if (!empty($pasta) && !empty($ano) && !empty($mes)) {
     $path = $objConfig->pathNFeFiles.DIRECTORY_SEPARATOR.$ambiente.DIRECTORY_SEPARATOR.$caminho;
     $aList = FilesFolders::listDir($path, '*-nfe.xml', true);
     $aDados = Dados::extrai($aList, $objConfig->cnpj);
-    $numNF = count($aList);
+    $numNF = count($aDados['aNF']);
     $numCanc = Dados::$nCanc;
     $dias = Dates::diasUteis($mes, $ano);
     $media = round($numNF/$dias, 0);
+    
     $htmlMsgPasta = "<i>Total de $numNF notas no mês $mes. "
             . "{ $numCanc notas canceladas} [ $media NFe/dia (até hoje $hoje) "
             . "e $dias dias úteis no mês.]</i>";
@@ -95,23 +101,37 @@ $selPasta = "<select size=\"1\" name=\"pasta\" id=\"pasta\">
 
 $htmlNotas = "";
 $i = 0;
-foreach ($aDados as $dado) {
-    $pathDanfe = "./print.php?xml=".$aList[$i];
-    $htmlLinhaNota = "<tr class=\"dados\">\n";
-    if ($dado['cStat'] != '100') {
-        $htmlLinhaNota = "<tr class=\"cancel\">\n";
-    }
-    $htmlLinhaNota .= "<td class=\"center\"><a href=\"$pathDanfe\" target=\"_blank\">".$dado['nNF']."</a></td>
-        <td class=\"center\">".$dado['serie']."</td>
-        <td class=\"center\">".$dado['data']."</td>
-        <td class=\"left\">".$dado['nome']."</td>
-        <td class=\"right\">".$dado['vNF']."</td>
-        <td class=\"left\">".$dado['natureza']."</td>
-        </tr>\n";
-    $htmlNotas .= $htmlLinhaNota;
-    $i++;
+$totFat = number_format($aDados['totFat'], '2', ',', '.');
+$totIcms = number_format($aDados['totIcms'], '2', ',', '.');
+$totPeso = number_format($aDados['totPeso'], '2', ',', '.');
+$fatMedio = round($aDados['totFat']/$dias);
+$fatMedioTxt = number_format($fatMedio, '2', ',', '.');
+$fatProj = number_format($aDados['totFat'], '2', ',', '.');
+if ($ano.$mes == date('Ym')) {
+    $diasRest = $dias - Dates::diasUteisNow($mes, $ano);
+    $fatProj = number_format($aDados['totFat'] + ($fatMedio * $diasRest), '2', ',', '.');
 }
-
+if (count($aDados['aNF']) > 0) {
+    foreach ($aDados['aNF'] as $dado) {
+        $gzPath = base64_encode(gzencode($aList[$i]));
+        $pathDanfe = "./print.php?xml=".$gzPath;
+        $address = base64_encode(gzencode($dado['email']));
+        $chave = $dado['nNF'];
+        $htmlLinhaNota = "<tr class=\"dados\">\n";
+        if ($dado['cStat'] != '100') {
+            $htmlLinhaNota = "<tr class=\"cancel\">\n";
+        }
+        $htmlLinhaNota .= "<td class=\"center\"><a href=\"#\" onClick=\"printDanfe('$gzPath');\">".$dado['nNF']."</a></td>
+            <td class=\"center\">".$dado['serie']."</td>
+            <td class=\"center\">".$dado['data']."</td>
+            <td class=\"left\"><a href=\"#\" onClick=\"mailDanfe('$chave', '$gzPath','$address');\">".$dado['nome']."</a></td>
+            <td class=\"right\">".$dado['vNF']."</td>
+            <td class=\"left\">".$dado['natureza']."</td>
+            </tr>\n";
+        $htmlNotas .= $htmlLinhaNota;
+        $i++;
+    }
+}
 $html = "<!DOCTYPE html>
 <html>
     <head>
@@ -121,6 +141,42 @@ $html = "<!DOCTYPE html>
         <link rel=\"stylesheet\" type=\"text/css\" href=\"css/teste.css\">
     </head>
     <body>
+    <script>
+        function OpenWindowWithPost(url, windowoption, name, params) {
+            var form = document.createElement(\"form\");
+            form.setAttribute(\"method\", \"post\");
+            form.setAttribute(\"action\", url);
+            form.setAttribute(\"target\", name);
+             for (var i in params) {
+                if (params.hasOwnProperty(i)) {
+                    var input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = i;
+                    input.value = params[i];
+                    form.appendChild(input);
+                }
+            }
+            document.body.appendChild(form);
+            window.open(\"\", name, windowoption);
+            form.submit();
+            document.body.removeChild(form);
+        }
+    
+        function printDanfe(dest) {
+            var url = 'print.php';
+            var name = 'page';
+            var specs = 'scrollbars=no,menubar=no,height=600,width=800,resizable=yes,toolbar=no,status=no';
+            var param = { 'xml' : dest };
+            OpenWindowWithPost(url, specs, name, param);		
+        }
+        function mailDanfe(chave, dest, address) {
+            var url = 'email.php';
+            var name = 'page';
+            var specs = 'scrollbars=no,menubar=no,height=160,width=650,resizable=yes,toolbar=no,status=no';
+            var param = { 'chave' : chave, 'xml' : dest, 'address' : address };
+            OpenWindowWithPost(url, specs, name, param);		
+        }
+    </script>
         <div class=\"container\">
             <div class=\"left\"><img src=\"images/logo.jpg\" alt=\"logo\" height=\"62\"></div>
             <div class=\"left\">
@@ -166,23 +222,23 @@ $html = "<!DOCTYPE html>
             <table border=\"0\" cellspacing=\"1\" width=\"40%\">
                 <tr>
                     <td class=\"right\">Total Faturado</td>
-                    <td class=\"right\">R$ 222222</td>
+                    <td class=\"right\">R$ $totFat</td>
                 </tr>
                 <tr>	
                     <td class=\"right\">Total ICMS</td>
-                    <td class=\"right\">R$ 222222</td>
+                    <td class=\"right\">R$ $totIcms</td>
                 </tr>
                 <tr>
-                    <td class=\"right\">Peso Liquido Total Faturado</td>
-                    <td class=\"right\">222222 kg</td>
+                    <td class=\"right\">Peso Liquido Total Movimentado</td>
+                    <td class=\"right\">$totPeso kg</td>
                 </tr>
                 <tr>
                     <td class=\"right\">Fat. Médio Diário</td>
-                    <td class=\"right\">R$ 222222</td>
+                    <td class=\"right\">R$ $fatMedioTxt</td>
                 </tr>
                 <tr>
                     <td class=\"right\"><i>Fat. Projetado</i></td>
-                    <td class=\"right\"><i>R$ 22222</i></td>
+                    <td class=\"right\"><i>R$ $fatProj</i></td>
                 </tr>
             </table>
             </center>
