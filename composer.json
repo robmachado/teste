@@ -1,8 +1,8 @@
 {
-    "name": "movimento",
+    "name": "robmachado/teste",
     "version":"1.0.0-dev",
     "type": "project",
-    "description": "Moviento de NFe",
+    "description": "Lista NFe",
     "license": [
         "LGPL-3.0+"
     ],
