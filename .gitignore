@@ -3,6 +3,7 @@ nbproject
 *.pfx
 *.pem
 *.cer
+*.pdf
 config.json
 composer.lock
 vendor

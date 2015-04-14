@@ -20,19 +20,23 @@ $bPdf = false;
 
 if ($comPdf === '1') {
     $bPdf = true;
+    $logo = 'images/logo.jpg';
+    if (strpos($xml, 'recebidas')) {
+        $logo = '';
+    }
     $docxml = FilesFolders::readFile($xml);
-    $danfe = new DanfeNFePHP($docxml, 'P', 'A4', '../images/logo.jpg', 'I', '');
+    $danfe = new DanfeNFePHP($docxml, 'P', 'A4', $logo, 'I', '');
     $id = $danfe->montaDANFE();
     $pathPdf = '../base/'.$id.'.pdf';
     $pdf = $danfe->printDANFE($pathPdf, 'F');
 }
 
 $mail = new Mail();
-
-if ($mail->envia($xml, $para, $bPdf, $pathPdf)) {
+$resp = $mail->envia($xml, $para, $bPdf, $pathPdf);
+if ($resp === true) {
     echo "SUCESSO NFe n. $chave, enviada para $para.";
 } else {
-    echo "FRACASSO!! houve algum problema.";
+    echo "FRACASSO!! houve algum problema. $mail->error";
 }
 
 if ($comPdf && is_file($pathPdf)) {

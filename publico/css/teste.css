@@ -60,16 +60,16 @@ td.right {
 
 div.left {
     float: left;
-    width:400px;
+    width: 30%;
 }
 
 div.right{
     float: right;
-    width:400px;
+    width: 30%;
 }
 
 .container{
     margin-left: auto;
     margin-right: auto;
-    width: 80%;    
+    width: 98%;    
 }

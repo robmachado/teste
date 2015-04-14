@@ -117,14 +117,16 @@ if (count($aDados['aNF']) > 0) {
         $pathDanfe = "./print.php?xml=".$gzPath;
         $address = base64_encode(gzencode($dado['email']));
         $chave = $dado['nNF'];
+        $clickMail = "<a href=\"#\" onClick=\"mailDanfe('$chave', '$gzPath','$address');\">".$dado['nome']."</a>";
         $htmlLinhaNota = "<tr class=\"dados\">\n";
         if ($dado['cStat'] != '100') {
+            $clickMail = "<a href=\"#\" onClick=\"alert('Nota Cancelada - o email não pode ser enviado!');\">".$dado['nome']."</a>";
             $htmlLinhaNota = "<tr class=\"cancel\">\n";
         }
         $htmlLinhaNota .= "<td class=\"center\"><a href=\"#\" onClick=\"printDanfe('$gzPath');\">".$dado['nNF']."</a></td>
             <td class=\"center\">".$dado['serie']."</td>
             <td class=\"center\">".$dado['data']."</td>
-            <td class=\"left\"><a href=\"#\" onClick=\"mailDanfe('$chave', '$gzPath','$address');\">".$dado['nome']."</a></td>
+            <td class=\"left\">$clickMail</td>
             <td class=\"right\">".$dado['vNF']."</td>
             <td class=\"left\">".$dado['natureza']."</td>
             </tr>\n";

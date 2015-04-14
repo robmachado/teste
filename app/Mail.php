@@ -7,6 +7,7 @@ use Common\Files;
 class Mail
 {
     public $aMailConf = array();
+    public $error = '';
     
     public function __construct($configJson = '')
     {
@@ -33,6 +34,8 @@ class Mail
             $comPdf = false;
         }
         $objMail = new MailNFe($this->aMailConf);
-        return $objMail->enviaMail($fileNfePath, $aPara, $comPdf, $pathPdf);
+        $resp = $objMail->envia($fileNfePath, $aPara, $comPdf, $pathPdf);
+        $this->error = $objMail->error;
+        return $resp;
     }
 }
