@@ -134,6 +134,7 @@ if (count($aDados['aNF']) > 0) {
             <td class=\"center\">".$dado['data']."</td>
             <td class=\"left\">$clickMail</td>
             <td class=\"right\">".$dado['vNF']."</td>
+            <td class=\"center\">".$dado['nProt']."</td>   
             <td class=\"left\">".$dado['natureza']."</td>
             </tr>\n";
         $htmlNotas .= $htmlLinhaNota;
@@ -220,6 +221,7 @@ $html = "<!DOCTYPE html>
                     <th class=\"dados\">Data</th>
                     <th class=\"dados\">Destinatário/Emitente</th>
                     <th class=\"dados\">Valor</th>
+                    <th class=\"dados\">Protocolo</th>
                     <th class=\"dados\">Natureza da Operação</th>
                 </tr>
                 $htmlNotas

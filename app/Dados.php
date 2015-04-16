@@ -41,6 +41,7 @@ class Dados
             $vNF = $dom->getValue($icmsTot, 'vNF');
             $vNFtext = 'R$ '.number_format($vNF, '2', ',', '.');
             $serie = $dom->getNodeValue('serie');
+            $nProt = $dom->getNodeValue('nProt');
             $nome = $emitRazao;
             if ($emitCNPJ == $cnpj) {
                 $nome = $destRazao;
@@ -61,7 +62,7 @@ class Dados
             $vICMS = $dom->getValue($icmsTot, 'vICMS');
             $totIcms += $vICMS;
             $valorFat = 0;
-            if ($vICMS != 0) {
+            if ($vICMS != 0 && $cStat == '100') {
                 $valorFat = $vNF;
             }
             $totFat += $valorFat;
@@ -78,6 +79,7 @@ class Dados
                 'natureza' => $dom->getValue($ide, 'natOp'),
                 'cStat' => $cStat,
                 'vNF' => $vNFtext,
+                'nProt' => $nProt,
                 'email' => $email
             );
         }
