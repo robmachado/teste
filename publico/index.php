@@ -27,6 +27,12 @@ $pasta = isset($_REQUEST['pasta']) ? $_REQUEST['pasta'] : '';
 $ano = isset($_REQUEST['ano']) ? $_REQUEST['ano'] : '';
 $mes = isset($_REQUEST['mes']) ? $_REQUEST['mes'] : '';
 
+if ($ano == '') {
+    $ano = date('Y');
+}
+if ($mes == '') {
+    $mes = date('m');
+}
 //$pasta = 'APROVADAS';
 //$ano = '2015';
 //$mes = '02';
