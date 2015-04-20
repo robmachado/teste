@@ -2,8 +2,8 @@
 
 namespace App;
 
-use Common\Dom\Dom;
-use Common\DateTime\DateTime;
+use nfephp\Common\Dom\Dom;
+use nfephp\Common\DateTime\DateTime;
 
 class Dados
 {
@@ -31,8 +31,10 @@ class Dados
             if ($cStat != '100') {
                 self::$nCanc++;
             }
-            $dhEmi = !empty($dom->getValue($ide, 'dhEmi')) ?
-                $dom->getValue($ide, 'dhEmi') : $dom->getValue($ide, 'dEmi');
+            $dhEmi = $dom->getValue($ide, 'dhEmi');
+            if (empty($dhEmi)) {
+                $dhEmi = $dom->getValue($ide, 'dEmi');
+            }
             $tsEmi = DateTime::convertSefazTimeToTimestamp($dhEmi);
             $data = date('d/m/Y', $tsEmi);
             $emitCNPJ = $dom->getValue($emit, 'CNPJ');

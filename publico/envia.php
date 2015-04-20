@@ -4,8 +4,8 @@ ini_set('display_errors', 'On');
 include_once '../bootstrap.php';
 
 use App\Mail;
-use Extras\DanfeNFePHP;
-use Common\Files\FilesFolders;
+use nfephp\Extras\DanfeNFePHP;
+use nfephp\Common\Files\FilesFolders;
 
 $chave = isset($_POST['chave']) ? $_POST['chave'] : '';
 $xml = isset($_POST['xml']) ? $_POST['xml'] : '';

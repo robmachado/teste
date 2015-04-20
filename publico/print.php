@@ -3,8 +3,8 @@ error_reporting(E_ALL);
 ini_set('display_errors', 'On');
 include_once '../bootstrap.php';
 
-use Extras\DanfeNFePHP;
-use Common\Files\FilesFolders;
+use nfephp\Extras\DanfeNFePHP;
+use nfephp\Common\Files\FilesFolders;
 
 $xml = isset($_REQUEST['xml']) ? $_REQUEST['xml'] : '';
 if ($xml == '') {
