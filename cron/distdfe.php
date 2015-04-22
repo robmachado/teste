@@ -58,10 +58,10 @@ while ($ultNSU < $maxNSU) {
         if (count($aResposta['aDoc']) > 0) {
             //para cada documentos retornado
             foreach ($aResposta['aDoc'] as $resp) {
-                //verificar se e uma NFe 
+                //verificar se e uma NFe
                 if (substr($resp['schema'], 0, 7) == 'procNFe') {
                     $content = $resp['doc'];
-                    $dom = new Dom('1.0', 'utf-8');
+                    $dom = new Dom();
                     $dom->loadXMLString($content);
                     $chave = $dom->getChave();
                     $data = $dom->getNodeValue('dhEmi');
