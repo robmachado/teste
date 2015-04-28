@@ -3,8 +3,8 @@ error_reporting(E_ALL);
 ini_set('display_errors', 'On');
 include_once '../bootstrap.php';
 
-use nfephp\Extras\DanfeNFePHP;
-use nfephp\Common\Files\FilesFolders;
+use NFePHP\Extras\Danfe;
+use NFePHP\Common\Files\FilesFolders;
 
 $xml = isset($_REQUEST['xml']) ? $_REQUEST['xml'] : '';
 if ($xml == '') {
@@ -17,6 +17,6 @@ if (strpos($xml, 'recebidas')) {
     $logo = '';
 }
 $docxml = FilesFolders::readFile($xml);
-$danfe = new DanfeNFePHP($docxml, 'P', 'A4', $logo, 'I', '');
+$danfe = new Danfe($docxml, 'P', 'A4', $logo, 'I', '');
 $id = $danfe->montaDANFE();
 $teste = $danfe->printDANFE($id.'.pdf', 'I');

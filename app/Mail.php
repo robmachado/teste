@@ -1,8 +1,8 @@
 <?php
 namespace App;
 
-use nfephp\NFe\MailNFe;
-use nfephp\Common\Files;
+use NFePHP\NFe\MailNFe;
+use NFePHP\Common\Files;
 
 class Mail
 {

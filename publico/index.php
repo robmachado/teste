@@ -6,7 +6,7 @@ include_once '../bootstrap.php';
 use App\Status;
 use App\Dates;
 use App\Dados;
-use nfephp\Common\Files\FilesFolders;
+use NFePHP\Common\Files\FilesFolders;
 
 //carrega os dados de configuração
 $configJson = FilesFolders::readFile('../config/config.json');

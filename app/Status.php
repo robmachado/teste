@@ -2,9 +2,9 @@
 
 namespace App;
 
-use nfephp\NFe\ToolsNFe;
-use nfephp\Common\DateTime\DateTime;
-use nfephp\Common\Files\FilesFolders;
+use NFePHP\NFe\ToolsNFe;
+use NFePHP\Common\DateTime\DateTime;
+use NFePHP\Common\Files\FilesFolders;
 
 if (!defined('APP_ROOT')) {
     define('APP_ROOT', dirname(dirname(__FILE__)));

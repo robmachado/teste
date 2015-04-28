@@ -2,8 +2,8 @@
 
 namespace App;
 
-use nfephp\Common\Dom\Dom;
-use nfephp\Common\DateTime\DateTime;
+use NFePHP\Common\Dom\Dom;
+use NFePHP\Common\DateTime\DateTime;
 
 class Dados
 {
