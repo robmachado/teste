@@ -2,6 +2,17 @@
 
 namespace App;
 
+/**
+ * Classe para buscar os documentos destinados
+ * 
+ * @category   Application
+ * @package    robmachado\teste
+ * @copyright  Copyright (c) 2008-2015
+ * @license    http://www.gnu.org/licenses/lesser.html LGPL v3
+ * @author     Roberto L. Machado <linux.rlm at gmail dot com>
+ * @link       http://github.com/robmachado/teste for the canonical source repository
+ */
+
 use NFePHP\NFe\ToolsNFe;
 use NFePHP\Common\Dom\Dom;
 use NFePHP\Common\Files\FilesFolders;
@@ -26,6 +37,10 @@ class DFe
     {
         $this->tools = new ToolsNFe('../config/config.json');
         $this->tools->setModelo('55');
+        //caso a versão do PHP não possa identificar automaticamente
+        //o protocolo a ser usado durante o handshake. Defina o protocolo.
+        $this->tools->setSSLProtocol('SSLv3');
+        
         $this->ambiente = $this->tools->ambiente;
         $this->pathNFe = $this->tools->aConfig['pathNFeFiles'];
         $this->tpAmb = $this->tools->aConfig['tpAmb'];
@@ -33,6 +48,15 @@ class DFe
         $this->getNSU();
     }
     
+    /**
+     * getNSU
+     * 
+     * Carrega os numeros do ultNSU e de maxNSU 
+     * gravados no arquivo da pasta base
+     * Esses numeros são usados para continuação das buscas
+     * no webservice de forma a trazer apenas os ultimos documentos
+     * ainda não importados
+     */
     public function getNSU()
     {
         $file = $this->nsuFilePath . $this->nsuFileName;
@@ -46,13 +70,35 @@ class DFe
         $this->maxNSU = (int) $nsuJson->maxNSU;
     }
     
+    /**
+     * putNSU
+     * Grava os numeros de ultNSU e maxNSU em um arquivo em formato json
+     * para serem utilizados posteriormente em outras buscas
+     * 
+     * @param integer $ultNSU
+     * @param integer $maxNSU
+     */
     public function putNSU($ultNSU = 0, $maxNSU = 0)
     {
-        $aNSU = array('ultNSU' => $ultNSU, 'maxNSU' => $maxNSU);
+        //o valor perc é destinado a ser usado com um "progress bar"
+        //em uma solicitação manual do usuário via página web
+        $perc = 0;
+        if ($maxNSU > 0) {
+            $perc = round(($ultNSU/$maxNSU)*100, 0);
+        }
+        $aNSU = array('ultNSU' => $ultNSU, 'maxNSU' => $maxNSU, 'perc' => $perc);
         $nsuJson = json_encode($aNSU);
         FilesFolders::saveFile($this->nsuFilePath, $this->nsuFileName, $nsuJson);
     }
     
+    /**
+     * getNFe
+     * Usa o webservice DistDFe da SEFAZ AN para trazer os docuentos destinados ao
+     * CNPJ do config.json e salvar as NFe retornadas na pasta recebidas/<anomes>
+     * 
+     * @param int $limit
+     * @param boolean $bIncludeAnomes
+     */
     public function getNFe($limit = 10, $bIncludeAnomes = false)
     {
         if ($this->ultNSU == $this->maxNSU) {
@@ -61,6 +107,7 @@ class DFe
         if ($limit > 100 || $limit == 0) {
             $limit = 10;
         }
+        $numNSU = 0;
         $cnpj = ''; //deixando vazio irá pegar o CNPJ default do config
         $descompactar = true;
         $iCount = 0;
@@ -71,12 +118,12 @@ class DFe
             }
             //limpar a variavel de retorno
             $aResposta = array();
-            $xml = $this->tools->sefazDistDFe(
+            $this->tools->sefazDistDFe(
                 'AN',
                 $this->tpAmb,
                 $cnpj,
                 $this->ultNSU,
-                $this->numNSU,
+                $numNSU,
                 $aResposta,
                 $descompactar
             );
@@ -93,6 +140,14 @@ class DFe
         }
     }
     
+    /**
+     * zSalva
+     * Recebe um array com a chave, data e o xml das NFe destinadas
+     * e grava na pasta das recebidas/<anomes>
+     * 
+     * @param array $aDocs
+     * @param boolean $bIncludeAnomes
+     */
     protected function zSalva($aDocs = array(), $bIncludeAnomes = false)
     {
         $path = $this->pathNFe .
@@ -108,11 +163,20 @@ class DFe
                 $path .= DIRECTORY_SEPARATOR.$anomes;
             }
             $filename = "$chave-nfe.xml";
-            echo "Salvando $filename \n";
+            //echo "Salvando $filename \n";
             FilesFolders::saveFile($path, $filename, $xml);
         }
     }
-
+    
+    /**
+     * zExtractNFe
+     * Recebe o array com os documentos retornados pelo
+     * webservice e caso sejam NFe retorna outro array com 
+     * a chave, data e o xml
+     * 
+     * @param array $docs
+     * @return array
+     */
     protected function zExtractNFe($docs = array())
     {
         $aResp = array();

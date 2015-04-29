@@ -3,6 +3,23 @@ error_reporting(E_ALL);
 ini_set('display_errors', 'On');
 include_once '../bootstrap.php';
 
+/**
+ * Rotina de entrada da aplicação, apresenta uma lista das NFe 
+ * gravatas na pasta indicada
+ * 
+ * Esta rotina recebe como parâmetro :
+ *  pasta -- que tipo de NFe deve ser buscada ENTRADAS, APROVADAS ou RECEBIDAS
+ *  ano -- ano a ser listado
+ *  mes -- mês a ser listado
+ * 
+ * @category   Application
+ * @package    robmachado\teste
+ * @copyright  Copyright (c) 2008-2015
+ * @license    http://www.gnu.org/licenses/lesser.html LGPL v3
+ * @author     Roberto L. Machado <linux.rlm at gmail dot com>
+ * @link       http://github.com/robmachado/teste for the canonical source repository
+ */
+
 use App\Status;
 use App\Dates;
 use App\Dados;
@@ -33,9 +50,6 @@ if ($ano == '') {
 if ($mes == '') {
     $mes = date('m');
 }
-//$pasta = 'APROVADAS';
-//$ano = '2015';
-//$mes = '02';
 
 //cria lista de anos desde 2008 que foi o incio dos dados
 $anoAtual = date('Y');
@@ -133,7 +147,7 @@ if (count($aDados['aNF']) > 0) {
             <td class=\"center\">".$dado['serie']."</td>
             <td class=\"center\">".$dado['data']."</td>
             <td class=\"left\">$clickMail</td>
-            <td class=\"right\">".$dado['vNF']."</td>
+            <td class=\"right\" width=\"10%\">".$dado['vNF']."</td>
             <td class=\"center\">".$dado['nProt']."</td>   
             <td class=\"left\">".$dado['natureza']."</td>
             </tr>\n";
@@ -220,7 +234,7 @@ $html = "<!DOCTYPE html>
                     <th class=\"dados\">Série</th>
                     <th class=\"dados\">Data</th>
                     <th class=\"dados\">Destinatário/Emitente</th>
-                    <th class=\"dados\">Valor</th>
+                    <th class=\"dados\" width=\"10%\">Valor</th>
                     <th class=\"dados\">Protocolo</th>
                     <th class=\"dados\">Natureza da Operação</th>
                 </tr>

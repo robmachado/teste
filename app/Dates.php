@@ -2,9 +2,28 @@
 
 namespace App;
 
+/**
+ * Classe para buscar os documentos destinados
+ * 
+ * @category   Application
+ * @package    robmachado\teste
+ * @copyright  Copyright (c) 2008-2015
+ * @license    http://www.gnu.org/licenses/lesser.html LGPL v3
+ * @author     Roberto L. Machado <linux.rlm at gmail dot com>
+ * @link       http://github.com/robmachado/teste for the canonical source repository
+ */
+    
 class Dates
 {
-    //dias uteis
+    
+    /**
+     * diasUteis
+     * Obtêm o numero de dias úteis no mês
+     * não são considerados os feriados
+     * @param int $mes
+     * @param int $ano
+     * @return int
+     */
     public static function diasUteis($mes = 1, $ano = 2015)
     {
         // Primeiro dia do mês
@@ -23,7 +42,15 @@ class Dates
         }
         return $workday;
     }
-
+    
+    /**
+     * diasUteisNow
+     * Obtêm o numero de dias úteis passados no mês até a data atual
+     * não são considerados os feriados
+     * @param int $mes
+     * @param int $ano
+     * @return int
+     */
     public static function diasUteisNow($mes = 1, $ano = 2015)
     {
         // Primeiro dia do mês

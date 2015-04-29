@@ -3,12 +3,27 @@ error_reporting(E_ALL);
 ini_set('display_errors', 'On');
 include_once '../bootstrap.php';
 
+/**
+ * Rotina de busca das NFe destinadas
+ * 
+ * @category   Application
+ * @package    robmachado\teste
+ * @copyright  Copyright (c) 2008-2015
+ * @license    http://www.gnu.org/licenses/lesser.html LGPL v3
+ * @author     Roberto L. Machado <linux.rlm at gmail dot com>
+ * @link       http://github.com/robmachado/teste for the canonical source repository
+ * 
+ * TODO: montar uma apresentação com progress bar
+ */
+
 use App\DFe;
 
 $dfe = new DFe();
 
-
-$dfe->getNFe(2);
+//50 é numero máximo de interações em uma única pesquisa
+//true indica que desejo salvar os dados na pasta recebidas/<anomes>
+//se false indica que desejo salvar os dados na pasta recebidas/
+$dfe->getNFe(50, true);
 
 /*
 ?>

@@ -3,12 +3,27 @@
 error_reporting(E_ALL);
 ini_set('display_errors', 'On');
 
+/**
+ * Pagina de acesso a rotina de envio do emails com a NFe
+ * 
+ * Esta rotina recebe como parâmetro :
+ * 
+ * chave --> chave da NFe
+ * xml --> o xml da NFe compactado e codificado em Base64
+ * address --> string compactada e codificada em base64 com os endereços de email dos destinatários separados com ';'
+ * 
+ * @category   Application
+ * @package    robmachado\teste
+ * @copyright  Copyright (c) 2008-2015
+ * @license    http://www.gnu.org/licenses/lesser.html LGPL v3
+ * @author     Roberto L. Machado <linux.rlm at gmail dot com>
+ * @link       http://github.com/robmachado/teste for the canonical source repository
+ */
+
 $chave = isset($_POST['chave']) ? $_POST['chave'] : '';
 $xml = isset($_POST['xml']) ? $_POST['xml'] : '';
 $address = isset($_POST['address']) ? $_POST['address'] : '';
 
-//$dxml = base64_decode($xml);
-//$xml = gzdecode($dxml);
 $daddress = base64_decode($address);
 $address = gzdecode($daddress);
 

@@ -4,14 +4,12 @@ ini_set('display_errors', 'On');
 
 include_once '../bootstrap.php';
 
-use NFe\ToolsNFe;
-use App\Dates;
+use App\Status;
 
-$siglaUF = 'SP';
-$tpAmb = '1';
-$aRetorno = array();
+//carrega os dados de configuração
+$configJson = FilesFolders::readFile('../config/config.json');
+$objConfig = json_decode($configJson);
 
-$nfe = new ToolsNFe('../config/config.json');
-$resp = $nfe->sefazStatus('', '', $aRetorno);
+$htmlStatus = Status::verifica($objConfig);
 
-echo json_encode($resp);
+//TODO: usar o jquery para atualizar os dados

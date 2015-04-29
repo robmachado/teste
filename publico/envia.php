@@ -3,6 +3,25 @@ error_reporting(E_ALL);
 ini_set('display_errors', 'On');
 include_once '../bootstrap.php';
 
+/**
+ * Rotina de envio do emails com a NFe
+ * 
+ * Esta rotina recebe como parâmetro :
+ * 
+ * chave --> chave da NFe
+ * xml --> o xml da NFe compactado e codificado em Base64
+ * para --> string com os endereços de email dos destinatários separados com ';'
+ * comPdf --> integer 1 ou nada para indicar que deve ser renderizado um DANFE para 
+ * ser enviado anexado ao email
+ * 
+ * @category   Application
+ * @package    robmachado\teste
+ * @copyright  Copyright (c) 2008-2015
+ * @license    http://www.gnu.org/licenses/lesser.html LGPL v3
+ * @author     Roberto L. Machado <linux.rlm at gmail dot com>
+ * @link       http://github.com/robmachado/teste for the canonical source repository
+ */
+
 use App\Mail;
 use NFePHP\Extras\DanfeNFePHP;
 use NFePHP\Common\Files\FilesFolders;
