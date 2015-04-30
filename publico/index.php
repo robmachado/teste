@@ -149,7 +149,7 @@ if (count($aDados['aNF']) > 0) {
             <td class=\"left email\">$clickMail</td>
             <td class=\"right\" width=\"10%\">".$dado['vNF']."</td>
             <td class=\"center\">".$dado['nProt']."</td>   
-            <td class=\"left\">".$dado['natureza']."</td>
+            <td class=\"left\"><a href=\"#\" onClick=\"openXml('$gzPath');\">".$dado['natureza']."</a></td>
             </tr>\n";
         $htmlNotas .= $htmlLinhaNota;
         $i++;
@@ -171,12 +171,12 @@ $html = "<!DOCTYPE html>
             //Helper function para valores formatados em R$
             var valor_from_string = function(str) {
                 //remover R$ e espaços e ponto
-                //var newstr = str.replace(/[^a-zA-Z $.]/g, '');
-                //newstr = newstr.replace(/[^,]/g, '.');
-                
-                //var valor = parseInt(newstr);
-                //substituir , por ponto multiplicar por 100 para deixar apenas inteiro longo
-                //retornar
+                var newstr = str.replace(/(\\t*) */g, '');
+                newstr = newstr.replace(/[A-Z]/g, '');
+                newstr = newstr.replace(/[$]/g, '');
+                newstr = newstr.replace(/\./g, '');
+                newstr = newstr.replace(/[,]/g, '.');
+                var valor = parseInt(newstr)*100;
                 return valor;
             }
             // Helper function to convert a string of the form Mar 15, 1987 into a Date object.
@@ -241,13 +241,21 @@ $html = "<!DOCTYPE html>
             form.submit();
             document.body.removeChild(form);
         }
-    
+        
+        function openXml(dest) {
+            var url = 'openxml.php';
+            var name = 'page';
+            var param = { 'xml' : dest };
+            var specs = 'scrollbars=no,menubar=no,height=600,width=800,resizable=yes,toolbar=no,status=no';
+            OpenWindowWithPost(url, specs, name, param);
+        }
+        
         function printDanfe(dest) {
             var url = 'print.php';
             var name = 'page';
             var specs = 'scrollbars=no,menubar=no,height=600,width=800,resizable=yes,toolbar=no,status=no';
             var param = { 'xml' : dest };
-            OpenWindowWithPost(url, specs, name, param);		
+            OpenWindowWithPost(url, specs, name, param);
         }
         
         function mailDanfe(chave, dest, address) {
