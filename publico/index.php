@@ -143,10 +143,10 @@ if (count($aDados['aNF']) > 0) {
             $clickMail = "<a href=\"#\" onClick=\"alert('Nota Cancelada - o email não pode ser enviado!');\">".$dado['nome']."</a>";
             $htmlLinhaNota = "<tr class=\"cancel\">\n";
         }
-        $htmlLinhaNota .= "<td class=\"center\"><a href=\"#\" onClick=\"printDanfe('$gzPath');\">".$dado['nNF']."</a></td>
+        $htmlLinhaNota .= "<td class=\"center numero\"><a href=\"#\" onClick=\"printDanfe('$gzPath');\">".$dado['nNF']."</a></td>
             <td class=\"center\">".$dado['serie']."</td>
             <td class=\"center\">".$dado['data']."</td>
-            <td class=\"left\">$clickMail</td>
+            <td class=\"left email\">$clickMail</td>
             <td class=\"right\" width=\"10%\">".$dado['vNF']."</td>
             <td class=\"center\">".$dado['nProt']."</td>   
             <td class=\"left\">".$dado['natureza']."</td>
@@ -161,9 +161,66 @@ $html = "<!DOCTYPE html>
         <title>Notas Fiscais</title>
         <meta charset=\"UTF-8\">
         <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">
+        <script src=\"http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js\"></script>
+        <script src=\"resources/stupidtable.js?dev\"></script>
         <link rel=\"stylesheet\" type=\"text/css\" href=\"css/teste.css\">
     </head>
     <body>
+    <script>
+        $(function() {
+            //Helper function para valores formatados em R$
+            var valor_from_string = function(str) {
+                //remover R$ e espaços e ponto
+                //var newstr = str.replace(/[^a-zA-Z $.]/g, '');
+                //newstr = newstr.replace(/[^,]/g, '.');
+                
+                //var valor = parseInt(newstr);
+                //substituir , por ponto multiplicar por 100 para deixar apenas inteiro longo
+                //retornar
+                return valor;
+            }
+            // Helper function to convert a string of the form Mar 15, 1987 into a Date object.
+            var date_from_string = function(str) {
+                var DateParts = str.split(\"/\");
+                var Year = DateParts[2];
+                var Month = DateParts[1];
+                var Day = DateParts[0];
+                return new Date(Year, Month, Day);
+            }
+            var table = $(\"table\").stupidtable({
+                \"date\": function(a,b) {
+                    // Get these into date objects for comparison.
+                    aDate = date_from_string(a);
+                    bDate = date_from_string(b);
+                    return aDate - bDate;
+                }
+            });
+            var table = $(\"table\").stupidtable({
+                \"valor\": function(a,b) {
+                    // Get these into int objects for comparison.
+                    aVal = valor_from_string(a);
+                    bVal = valor_from_string(b);
+                    return aVal - bVal;
+                }
+            });
+            table.on(\"beforetablesort\", function (event, data) {
+                // Apply a \"disabled\" look to the table while sorting.
+                // Using addClass for testing as it takes slightly longer to render.
+                $(\"#msg\").text(\"Sorting...\");
+                $(\"table\").addClass(\"disabled\");
+            });
+            table.on(\"aftertablesort\", function (event, data) {
+                // Reset loading message.
+                $(\"#msg\").html(\"&nbsp;\");
+                $(\"table\").removeClass(\"disabled\");
+                var th = $(this).find(\"th\");
+                th.find(\".arrow\").remove();
+                var dir = $.fn.stupidtable.dir;
+                var arrow = data.direction === dir.ASC ? \"&uarr;\" : \"&darr;\";
+                th.eq(data.column).append('<span class=\"arrow\">' + arrow +'</span>');
+            });
+        });    
+    </script>
     <script>
         function OpenWindowWithPost(url, windowoption, name, params) {
             var form = document.createElement(\"form\");
@@ -192,6 +249,7 @@ $html = "<!DOCTYPE html>
             var param = { 'xml' : dest };
             OpenWindowWithPost(url, specs, name, param);		
         }
+        
         function mailDanfe(chave, dest, address) {
             var url = 'email.php';
             var name = 'page';
@@ -200,6 +258,7 @@ $html = "<!DOCTYPE html>
             OpenWindowWithPost(url, specs, name, param);		
         }
     </script>
+        <p id=\"msg\">&nbsp;</p>
         <div class=\"container\">
             <div class=\"left\"><img src=\"images/logo.jpg\" alt=\"logo\" height=\"62\"></div>
             <div class=\"left\">
@@ -210,14 +269,13 @@ $html = "<!DOCTYPE html>
             <div class=\"right\">
                 <form method=\"POST\" name=\"myform\" action=\"\">
                     <label>Origem</label><br>$selPasta<br>
-                    <table><tr><td>
+                    <div>
                     <label>Ano</label><br>$selAnos
-                    </td>
-                    <td>
+                    </div>
+                    <div>
                     <label>Mês</label><br>$selMeses
-                    </td>
-                    </tr>
-                    </table><br>
+                    </div>
+                    <br>
                     <input type=\"submit\" value=\"Procurar Notas\" name=\"B1\">
                 </form>
             </div>
@@ -228,17 +286,21 @@ $html = "<!DOCTYPE html>
                     <td>$htmlMsgPasta</td>
                 </tr>
             </table>    
-            <table width=\"95%\">
+            <table class=\"sort\" width=\"95%\">
+                <thead>
                 <tr>
-                    <th class=\"dados\">Número</th>
-                    <th class=\"dados\">Série</th>
-                    <th class=\"dados\">Data</th>
-                    <th class=\"dados\">Destinatário/Emitente</th>
-                    <th class=\"dados\" width=\"10%\">Valor</th>
-                    <th class=\"dados\">Protocolo</th>
-                    <th class=\"dados\">Natureza da Operação</th>
+                    <th data-sort=\"int\" class=\"sort\">Número</th>
+                    <th data-sort=\"int\" class=\"sort\">Série</th>
+                    <th data-sort=\"date\" class=\"sort\">Data</th>
+                    <th data-sort=\"string\" class=\"sort\">Destinatário/Emitente</th>
+                    <th data-sort=\"valor\" class=\"sort\" width=\"10%\">Valor</th>
+                    <th class=\"sort\">Protocolo</th>
+                    <th data-sort=\"string\" class=\"sort\">Natureza da Operação</th>
                 </tr>
+                </thead>
+                <tbody>
                 $htmlNotas
+                </tbody>
             </table>
         </div>
         <div class=\"container\">
