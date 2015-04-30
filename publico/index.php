@@ -44,6 +44,10 @@ $pasta = isset($_REQUEST['pasta']) ? $_REQUEST['pasta'] : '';
 $ano = isset($_REQUEST['ano']) ? $_REQUEST['ano'] : '';
 $mes = isset($_REQUEST['mes']) ? $_REQUEST['mes'] : '';
 
+if ($pasta == '') {
+    $pasta = 'APROVADAS';
+}
+
 if ($ano == '') {
     $ano = date('Y');
 }
@@ -170,7 +174,6 @@ $html = "<!DOCTYPE html>
         $(function() {
             //Helper function para valores formatados em R$
             var valor_from_string = function(str) {
-                //remover R$ e espaços e ponto
                 var newstr = str.replace(/(\\t*) */g, '');
                 newstr = newstr.replace(/[A-Z]/g, '');
                 newstr = newstr.replace(/[$]/g, '');
@@ -179,22 +182,6 @@ $html = "<!DOCTYPE html>
                 var valor = parseInt(newstr)*100;
                 return valor;
             }
-            // Helper function to convert a string of the form Mar 15, 1987 into a Date object.
-            var date_from_string = function(str) {
-                var DateParts = str.split(\"/\");
-                var Year = DateParts[2];
-                var Month = DateParts[1];
-                var Day = DateParts[0];
-                return new Date(Year, Month, Day);
-            }
-            var table = $(\"table\").stupidtable({
-                \"date\": function(a,b) {
-                    // Get these into date objects for comparison.
-                    aDate = date_from_string(a);
-                    bDate = date_from_string(b);
-                    return aDate - bDate;
-                }
-            });
             var table = $(\"table\").stupidtable({
                 \"valor\": function(a,b) {
                     // Get these into int objects for comparison.
@@ -206,7 +193,7 @@ $html = "<!DOCTYPE html>
             table.on(\"beforetablesort\", function (event, data) {
                 // Apply a \"disabled\" look to the table while sorting.
                 // Using addClass for testing as it takes slightly longer to render.
-                $(\"#msg\").text(\"Sorting...\");
+                $(\"#msg\").text(\"Organizando a tabela ...\");
                 $(\"table\").addClass(\"disabled\");
             });
             table.on(\"aftertablesort\", function (event, data) {
@@ -241,7 +228,6 @@ $html = "<!DOCTYPE html>
             form.submit();
             document.body.removeChild(form);
         }
-        
         function openXml(dest) {
             var url = 'openxml.php';
             var name = 'page';
@@ -249,7 +235,6 @@ $html = "<!DOCTYPE html>
             var specs = 'scrollbars=no,menubar=no,height=600,width=800,resizable=yes,toolbar=no,status=no';
             OpenWindowWithPost(url, specs, name, param);
         }
-        
         function printDanfe(dest) {
             var url = 'print.php';
             var name = 'page';
@@ -266,13 +251,13 @@ $html = "<!DOCTYPE html>
             OpenWindowWithPost(url, specs, name, param);		
         }
     </script>
-        <p id=\"msg\">&nbsp;</p>
         <div class=\"container\">
             <div class=\"left\"><img src=\"images/logo.jpg\" alt=\"logo\" height=\"62\"></div>
             <div class=\"left\">
                 <h1 align=\"center\">$titulo</h1>
                 $htmlStatus
                 $htmlCert
+                <p id=\"msg\">&nbsp;</p>    
             </div>
             <div class=\"right\">
                 <form method=\"POST\" name=\"myform\" action=\"\">
@@ -284,7 +269,7 @@ $html = "<!DOCTYPE html>
                     <label>Mês</label><br>$selMeses
                     </div>
                     <br>
-                    <input type=\"submit\" value=\"Procurar Notas\" name=\"B1\">
+                    <input type=\"submit\" value=\"Buscar as Notas\" name=\"B1\">
                 </form>
             </div>
         </div>
@@ -293,17 +278,17 @@ $html = "<!DOCTYPE html>
                 <tr>
                     <td>$htmlMsgPasta</td>
                 </tr>
-            </table>    
-            <table class=\"sort\" width=\"95%\">
+            </table>
+            <table width=\"95%\">
                 <thead>
                 <tr>
-                    <th data-sort=\"int\" class=\"sort\">Número</th>
-                    <th data-sort=\"int\" class=\"sort\">Série</th>
-                    <th data-sort=\"date\" class=\"sort\">Data</th>
-                    <th data-sort=\"string\" class=\"sort\">Destinatário/Emitente</th>
-                    <th data-sort=\"valor\" class=\"sort\" width=\"10%\">Valor</th>
-                    <th class=\"sort\">Protocolo</th>
-                    <th data-sort=\"string\" class=\"sort\">Natureza da Operação</th>
+                    <th class=\"border\" data-sort=\"int\">Número</th>
+                    <th class=\"border\" data-sort=\"int\">Série</th>
+                    <th class=\"border\" data-sort=\"string\">Data</th>
+                    <th class=\"border\" data-sort=\"string\">Destinatário/Emitente</th>
+                    <th class=\"border\" data-sort=\"valor\" width=\"10%\">Valor</th>
+                    <th class=\"border\">Protocolo</th>
+                    <th class=\"border\" data-sort=\"string\">Natureza da Operação</th>
                 </tr>
                 </thead>
                 <tbody>
