@@ -46,6 +46,7 @@ class Dados
             if (empty($dhEmi)) {
                 $dhEmi = $dom->getValue($ide, 'dEmi');
             }
+            //echo $file.'___'.$dhEmi.'<br>';
             $tsEmi = DateTime::convertSefazTimeToTimestamp($dhEmi);
             $data = date('d/m/Y', $tsEmi);
             $emitCNPJ = $dom->getValue($emit, 'CNPJ');

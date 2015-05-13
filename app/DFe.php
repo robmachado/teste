@@ -159,12 +159,13 @@ class DFe
             $anomes = $doc['anomes'];
             $chave =  $doc['chave'];
             $xml = $doc['xml'];
+            $pathnfe = $path;
             if ($bIncludeAnomes) {
-                $path .= DIRECTORY_SEPARATOR.$anomes;
+                $pathnfe = $path.DIRECTORY_SEPARATOR.$anomes;
             }
             $filename = "$chave-nfe.xml";
             //echo "Salvando $filename \n";
-            FilesFolders::saveFile($path, $filename, $xml);
+            FilesFolders::saveFile($pathnfe, $filename, $xml);
         }
     }
     
