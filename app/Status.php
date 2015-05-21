@@ -58,7 +58,7 @@ class Status
         $dhora = date('d/m/Y H:i:s', $tstmp);
         $htmlStatus = "<p class=\"smallred\">OFF-LINE</p>\n<p class=\"smallred\">$dhora</p>";
         if ($aRetorno['cStat'] == '107') {
-            $htmlStatus = "<p class=\"smallgreen\">On-Line</p>\n<p class=\"smallgreen\">$dhora</p>";
+            $htmlStatus = "<p class=\"smallgreen\">SEFAZ On-Line</p>\n<p class=\"smallgreen\">$dhora</p>";
         }
         return $htmlStatus;
     }
