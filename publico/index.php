@@ -1,6 +1,11 @@
 <?php
 error_reporting(E_ALL);
 ini_set('display_errors', 'On');
+
+//error_reporting(0);
+//ini_set('display_errors', 'Off');
+
+
 include_once '../bootstrap.php';
 
 /**
@@ -24,6 +29,7 @@ use App\Status;
 use App\Dates;
 use App\Dados;
 use NFePHP\Common\Files\FilesFolders;
+use NFePHP\Common\Exception\InvalidArgumentException;
 
 //carrega os dados de configuração
 $configJson = FilesFolders::readFile('../config/config.json');
@@ -102,9 +108,15 @@ if (!empty($pasta) && !empty($ano) && !empty($mes)) {
         $caminho = 'recebidas'.DIRECTORY_SEPARATOR.$ano.$mes;
         $chkRecebidas = 'SELECTED ';
     }
+    $aList = array();
+    $mensagem = '';
     $titulo .= " $mes/$ano";
     $path = $objConfig->pathNFeFiles.DIRECTORY_SEPARATOR.$ambiente.DIRECTORY_SEPARATOR.$caminho;
-    $aList = FilesFolders::listDir($path, '*-nfe.xml', true);
+    try {
+        $aList = FilesFolders::listDir($path, '*.xml', true);
+    } catch (InvalidArgumentException $exc) {
+        $mensagem = $exc->getMessage();
+    }
     $aDados = Dados::extrai($aList, $objConfig->cnpj);
     $numNF = count($aDados['aNF']);
     $numCanc = Dados::$nCanc;
@@ -147,12 +159,12 @@ if (count($aDados['aNF']) > 0) {
             $clickMail = "<a href=\"#\" onClick=\"alert('Nota Cancelada - o email não pode ser enviado!');\">".$dado['nome']."</a>";
             $htmlLinhaNota = "<tr class=\"cancel\">\n";
         }
-        $htmlLinhaNota .= "<td class=\"center numero\"><a href=\"#\" onClick=\"printDanfe('$gzPath');\">".$dado['nNF']."</a></td>
+        $htmlLinhaNota .= "<td class=\"center\"><a href=\"#\" onClick=\"printDanfe('$gzPath');\">".$dado['nNF']."</a></td>
             <td class=\"center\">".$dado['serie']."</td>
             <td class=\"center\">".$dado['data']."</td>
             <td class=\"left email\">$clickMail</td>
             <td class=\"right\" width=\"10%\">".$dado['vNF']."</td>
-            <td class=\"center\">".$dado['nProt']."</td>   
+            <td class=\"center\">".$dado['nProt'].'-'.$dado['cStat']."</td>   
             <td class=\"left\"><a href=\"#\" onClick=\"openXml('$gzPath');\">".$dado['natureza']."</a></td>
             </tr>\n";
         $htmlNotas .= $htmlLinhaNota;
@@ -242,7 +254,6 @@ $html = "<!DOCTYPE html>
             var param = { 'xml' : dest };
             OpenWindowWithPost(url, specs, name, param);
         }
-        
         function mailDanfe(chave, dest, address) {
             var url = 'email.php';
             var name = 'page';
@@ -298,6 +309,7 @@ $html = "<!DOCTYPE html>
         </div>
         <div class=\"container\">
             <center>
+            <h2>$mensagem</h2>
             <table border=\"0\" cellspacing=\"1\" width=\"40%\">
                 <tr>
                     <td class=\"right\">Total Faturado</td>
@@ -321,7 +333,8 @@ $html = "<!DOCTYPE html>
                 </tr>
             </table>
             </center>
-        </div>    
+        </div>
+        
     </body>
 </html>
 ";

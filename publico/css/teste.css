@@ -38,6 +38,14 @@ table {
     margin: 1em auto;
 }
 
+tr.dados {
+    background-color:#FFFFFF;
+}
+
+tr.cancel {
+    background-color:#FF33FF;
+}
+
 td.border {
     padding: 5px 10px;
     border: 1px solid #999;
@@ -61,7 +69,7 @@ td.numero {
 }
 
 td.email {
-    color: #666;
+    //color: #666;
     text-decoration: underline;
 }
 
@@ -88,24 +96,17 @@ th[data-sort]{
 }
 
 /* zebra-striping seems to really slow down Opera sometimes */
-tr:nth-child(even) > td {
-    background-color: #f9f9f7;
-}
-tr:nth-child(odd) > td {
-    background-color: #ffffff;
-}
+//tr:nth-child(even) > td {
+//    background-color: #f9f9f7;
+//}
+//tr:nth-child(odd) > td {
+//    background-color: #ffffff;
+//}
 
 .disabled {
     opacity: 0.5;
 }
 
-tr.dados {
-    background-color:#FFFF99;
-}
-
-tr.cancel {
-    background-color:#FF33FF;
-}
 
 div.left {
     float: left;
