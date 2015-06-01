@@ -95,18 +95,10 @@ th[data-sort]{
     text-align: center;
 }
 
-/* zebra-striping seems to really slow down Opera sometimes */
-//tr:nth-child(even) > td {
-//    background-color: #f9f9f7;
-//}
-//tr:nth-child(odd) > td {
-//    background-color: #ffffff;
-//}
 
 .disabled {
     opacity: 0.5;
 }
-
 
 div.left {
     float: left;
