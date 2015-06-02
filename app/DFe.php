@@ -44,7 +44,7 @@ class DFe
         $this->ambiente = $this->tools->ambiente;
         $this->pathNFe = $this->tools->aConfig['pathNFeFiles'];
         $this->tpAmb = $this->tools->aConfig['tpAmb'];
-        $this->nsuFilePath = PATH_ROOT.'base'.DIRECTORY_SEPARATOR;
+        $this->nsuFilePath = PATH_ROOT.'base';
         $this->getNSU();
     }
     
