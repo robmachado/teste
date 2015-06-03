@@ -17,6 +17,7 @@ use NFePHP\NFe\ToolsNFe;
 use NFePHP\Common\Dom\Dom;
 use NFePHP\Common\Files\FilesFolders;
 use NFePHP\Common\DateTime\DateTime;
+use \DOMDocument;
 
 if (!defined('PATH_ROOT')) {
     define('PATH_ROOT', dirname(dirname(__FILE__)).DIRECTORY_SEPARATOR);
@@ -65,7 +66,8 @@ class DFe
             $nsuJson = json_encode($aNSU);
             FilesFolders::saveFile($this->nsuFilePath, $this->nsuFileName, $nsuJson);
         }
-        $nsuJson = json_decode(FilesFolders::readFile($this->nsuFilePath . $this->nsuFileName));
+        $nsuFile = $this->nsuFilePath . DIRECTORY_SEPARATOR . $this->nsuFileName;
+        $nsuJson = json_decode(FilesFolders::readFile($nsuFile));
         $this->ultNSU = (int) $nsuJson->ultNSU;
         $this->maxNSU = (int) $nsuJson->maxNSU;
     }
@@ -209,7 +211,51 @@ class DFe
                     'xml' => $xmldata
                 );
             }
+            //verifica se é um cancelamento
+            if (substr($resp['schema'], 0, 10) == 'procEvento') {
+                $content = $resp['doc'];
+                $dom = new Dom();
+                $dom->loadXMLString($content);
+                $data = $dom->getNodeValue('dhEvento');
+                $tsdhevento = DateTime::convertSefazTimeToTimestamp($data);
+                $anomes = date('Ym', $tsdhevento);
+                $tpEvento = $dom->getNodeValue('tpEvento');
+                $chave = $dom->getNodeValue('chNFe');
+                if ($tpEvento == '110111') {
+                    //confirmado cancelamento, localizar o xml da NFe recebida
+                    //na pasta anomes
+                    $path = $this->pathNFe .
+                        DIRECTORY_SEPARATOR .
+                        $this->ambiente .
+                        DIRECTORY_SEPARATOR .
+                        "recebidas".
+                        DIRECTORY_SEPARATOR .
+                        $anomes;
+                    $pathFile = $path . DIRECTORY_SEPARATOR . $chave . '-nfe.xml';
+                    self::zCancela($pathFile);
+                }
+            }
         }
         return $aResp;
+    }
+    
+    /**
+     * zCancela
+     * Edita a NFe recebida de terceiros indicando o cancelamento
+     * @param string $pathFile
+     */
+    private static function zCancela($pathFile)
+    {
+        if (is_file($pathFile)) {
+            //o arquivo foi localizado, então indicar o cancelamento
+            //editando o xml da NFe e substituindo o cStat do protocolo por
+            //135 ou 101
+            $xml = FilesFolders::readFile($pathFile);
+            $nfe = new \DOMDocument();
+            $nfe->loadXML($xml);
+            $infProt = $nfe->getElementsByTagName('infProt')->item(0);
+            $infProt->getElementsByTagName('cStat')->item(0)->nodeValue = '101';
+            $nfe->save($pathFile);
+        }
     }
 }

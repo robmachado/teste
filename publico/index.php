@@ -263,7 +263,7 @@ $html = "<!DOCTYPE html>
         }
     </script>
         <div class=\"container\">
-            <div class=\"left\"><img src=\"images/logo.jpg\" alt=\"logo\" height=\"62\"></div>
+            <div class=\"left\"><img src=\"images/nfephplogo.jpg\" alt=\"logo\" height=\"62\"></div>
             <div class=\"left\">
                 <h1 align=\"center\">$titulo</h1>
                 $htmlStatus
