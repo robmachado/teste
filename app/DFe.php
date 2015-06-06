@@ -135,10 +135,9 @@ class DFe
                 $this->ultNSU = (int) $aResposta['ultNSU'];
                 $this->maxNSU = (int) $aResposta['maxNSU'];
                 $this->putNSU($this->ultNSU, $this->maxNSU);
-                $aDocs = $this->zExtractNFe($aResposta['aDoc']);
-                $this->zSalva($aDocs, $bIncludeAnomes);
+                $this->zExtractDocs($aResposta['aDoc'], $bIncludeAnomes = false);
             }
-            sleep(3);
+            sleep(5);
         }
     }
     
@@ -150,13 +149,20 @@ class DFe
      * @param array $aDocs
      * @param boolean $bIncludeAnomes
      */
-    protected function zSalva($aDocs = array(), $bIncludeAnomes = false)
+    protected function zSalva($aDocs = array(), $dir = 'recebidas', $bIncludeAnomes = false)
     {
+        if (empty($aDocs)) {
+            return;
+        }
         $path = $this->pathNFe .
             DIRECTORY_SEPARATOR .
             $this->ambiente .
             DIRECTORY_SEPARATOR .
-            "recebidas";
+            $dir;
+        $name = '-nfe.xml';
+        if ($dir != 'recebidas') {
+            $name = '-resNFe.xml';
+        }
         foreach ($aDocs as $doc) {
             $anomes = $doc['anomes'];
             $chave =  $doc['chave'];
@@ -165,7 +171,7 @@ class DFe
             if ($bIncludeAnomes) {
                 $pathnfe = $path.DIRECTORY_SEPARATOR.$anomes;
             }
-            $filename = "$chave-nfe.xml";
+            $filename = "$chave$name";
             //echo "Salvando $filename \n";
             FilesFolders::saveFile($pathnfe, $filename, $xml);
         }
@@ -180,63 +186,127 @@ class DFe
      * @param array $docs
      * @return array
      */
-    protected function zExtractNFe($docs = array())
+    protected function zExtractDocs($docs = array(), $bIncludeAnomes = false)
     {
         $aResp = array();
         //para cada documento retornado
         foreach ($docs as $resp) {
-            $content = '';
-            $xmldata = '';
-            //verificar se é uma NFe
-            if (substr($resp['schema'], 0, 7) == 'procNFe') {
-                $content = $resp['doc'];
-                $dom = new Dom();
-                $dom->loadXMLString($content);
-                $chave = $dom->getChave();
-                $data = $dom->getNodeValue('dhEmi');
-                if ($data == '') {
-                    $data = $dom->getNodeValue('dEmi');
-                }
-                $tsdhemi = DateTime::convertSefazTimeToTimestamp($data);
-                $anomes = date('Ym', $tsdhemi);
-                $xmldata = $dom->saveXML();
-                $xmldata = str_replace(
-                    '<?xml version="1.0"?>',
-                    '<?xml version="1.0" encoding="utf-8"?>',
-                    $xmldata
-                );
-                $aResp[] = array(
-                    'chave'=>$chave,
-                    'anomes' => $anomes,
-                    'xml' => $xmldata
-                );
-            }
-            //verifica se é um cancelamento
-            if (substr($resp['schema'], 0, 10) == 'procEvento') {
-                $content = $resp['doc'];
-                $dom = new Dom();
-                $dom->loadXMLString($content);
-                $data = $dom->getNodeValue('dhEvento');
-                $tsdhevento = DateTime::convertSefazTimeToTimestamp($data);
-                $anomes = date('Ym', $tsdhevento);
-                $tpEvento = $dom->getNodeValue('tpEvento');
-                $chave = $dom->getNodeValue('chNFe');
-                if ($tpEvento == '110111') {
-                    //confirmado cancelamento, localizar o xml da NFe recebida
-                    //na pasta anomes
-                    $path = $this->pathNFe .
-                        DIRECTORY_SEPARATOR .
-                        $this->ambiente .
-                        DIRECTORY_SEPARATOR .
-                        "recebidas".
-                        DIRECTORY_SEPARATOR .
-                        $anomes;
-                    $pathFile = $path . DIRECTORY_SEPARATOR . $chave . '-nfe.xml';
-                    self::zCancela($pathFile);
-                }
+            $schema = substr($resp['schema'], 0, 6);
+            switch ($schema) {
+                case 'resNFe':
+                    $aDocs = self::zTrataResNFe($resp);
+                    //mostar as notas resumo e manifestar
+                    $this->zSalva($aDocs, 'recebidas/resumo', false);
+                    break;
+                case 'procNF':
+                    $aDocs = self::zTrataProcNFe($resp);
+                    $this->zSalva($aDocs, 'recebidas', $bIncludeAnomes);
+                    break;
+                case 'procEv':
+                    $aResp = self::zTrataProcEvent($resp);
+                    break;
             }
         }
         return $aResp;
+    }
+    
+    /**
+     * zTrataResNFe
+     * Trata os resumos recebidos de NFe que devem ser manifestadas
+     * @param array $resp
+     * @return array
+     */
+    private static function zTrataResNFe($resp = array())
+    {
+        $aResp = array();
+        $content = $resp['doc'];
+        $dom = new Dom();
+        $dom->loadXMLString($content);
+        $aResp['chNFe'] = $dom->getNodeValue('chNFe');
+        $aResp['cnpj'] = $dom->getNodeValue('CNPJ');
+        $aResp['cpf']  = $dom->getNodeValue('CPF');
+        $aResp['tpNF'] = $dom->getNodeValue('tpNF');
+        $aResp['vNF'] = $dom->getNodeValue('vNF');
+        $aResp['digval'] = $dom->getNodeValue('digVal');
+        $aResp['nprot'] = $dom->getNodeValue('nProt');
+        $aResp['cSitNFe'] = $dom->getNodeValue('cSitNFe');
+        $data = $dom->getNodeValue('dhEmi');
+        $aResp['tsdhemi'] = DateTime::convertSefazTimeToTimestamp($data);
+        $data = $dom->getNodeValue('dhRecbto');
+        $aResp['tsdhrecbto'] = DateTime::convertSefazTimeToTimestamp($data);
+        $aResp['chave'] = $aResp['chNFe'];
+        $aResp['anomes'] = date('Ym', $aResp['tsdhemi']);
+        $aResp['xml'] = $dom->saveXML();
+        return $aResp;
+    }
+    
+    private static function zTrataProcNFe($resp = array())
+    {
+        $content = $resp['doc'];
+        $dom = new Dom();
+        $dom->loadXMLString($content);
+        $chave = $dom->getChave();
+        $data = $dom->getNodeValue('dhEmi');
+        if ($data == '') {
+            $data = $dom->getNodeValue('dEmi');
+        }
+        $tsdhemi = DateTime::convertSefazTimeToTimestamp($data);
+        $anomes = date('Ym', $tsdhemi);
+        $xmldata = $dom->saveXML();
+        $xmldata = str_replace(
+            '<?xml version="1.0"?>',
+            '<?xml version="1.0" encoding="utf-8"?>',
+            $xmldata
+        );
+        $aResp[] = array(
+            'chave' => $chave,
+            'anomes' => $anomes,
+            'xml' => $xmldata
+        );
+        return $aResp;
+    }
+    
+    /**
+     * 
+     * @param array $resp
+     */
+    private static function zTrataProcEvent($resp = array())
+    {
+        $content = $resp['doc'];
+        $dom = new Dom();
+        $dom->loadXMLString($content);
+        $data = $dom->getNodeValue('dhEvento');
+        $tsdhevento = DateTime::convertSefazTimeToTimestamp($data);
+        $anomes = date('Ym', $tsdhevento);
+        $tpEvento = $dom->getNodeValue('tpEvento');
+        $chave = $dom->getNodeValue('chNFe');
+        if ($tpEvento == '110111') {
+            //confirmado cancelamento, localizar o xml da NFe recebida
+            //na pasta anomes
+            $path = $this->pathNFe .
+                DIRECTORY_SEPARATOR .
+                $this->ambiente .
+                DIRECTORY_SEPARATOR .
+                "recebidas".
+                DIRECTORY_SEPARATOR .
+                $anomes;
+            $pathFile = $path . DIRECTORY_SEPARATOR . $chave . '-nfe.xml';
+            self::zCancela($pathFile);
+        }
+        return array();
+    }
+    
+    public static function manifesta($chNFe = '', $tpEvento = '210210')
+    {
+        $aRetorno = array();
+        $xJust = '';
+        $this->tools->sefazManifesta(
+            $chNFe,
+            $this->tpAmb,
+            $xJust,
+            $tpEvento,
+            $aRetorno
+        );
     }
     
     /**
