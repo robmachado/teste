@@ -34,6 +34,7 @@ p.xsmall {
 }
 
 table {
+    padding: 5px 10px;
     border-collapse: collapse;
     margin: 1em auto;
 }

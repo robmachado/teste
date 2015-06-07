@@ -32,6 +32,7 @@ class DFe
     public $nsuFileName = 'nsu.json';
     public $ambiente = 'homologacao';
     public $pathNFe = '';
+    public $pathRes = '';
     public $tpAmb = '2';
     
     public function __construct()
@@ -40,10 +41,11 @@ class DFe
         $this->tools->setModelo('55');
         //caso a versão do PHP não possa identificar automaticamente
         //o protocolo a ser usado durante o handshake. Defina o protocolo.
-        $this->tools->setSSLProtocol('SSLv3');
+        //$this->tools->setSSLProtocol('SSLv3');
         
         $this->ambiente = $this->tools->ambiente;
         $this->pathNFe = $this->tools->aConfig['pathNFeFiles'];
+        $this->pathRes = $this->tools->aConfig['pathNFeFiles'].DIRECTORY_SEPARATOR.$this->ambiente.DIRECTORY_SEPARATOR.'recebidas'.DIRECTORY_SEPARATOR.'resumo';
         $this->tpAmb = $this->tools->aConfig['tpAmb'];
         $this->nsuFilePath = PATH_ROOT.'base';
         $this->getNSU();
@@ -222,24 +224,37 @@ class DFe
         $content = $resp['doc'];
         $dom = new Dom();
         $dom->loadXMLString($content);
-        $aResp['chNFe'] = $dom->getNodeValue('chNFe');
-        $aResp['cnpj'] = $dom->getNodeValue('CNPJ');
-        $aResp['cpf']  = $dom->getNodeValue('CPF');
-        $aResp['tpNF'] = $dom->getNodeValue('tpNF');
-        $aResp['vNF'] = $dom->getNodeValue('vNF');
-        $aResp['digval'] = $dom->getNodeValue('digVal');
-        $aResp['nprot'] = $dom->getNodeValue('nProt');
-        $aResp['cSitNFe'] = $dom->getNodeValue('cSitNFe');
-        $data = $dom->getNodeValue('dhEmi');
-        $aResp['tsdhemi'] = DateTime::convertSefazTimeToTimestamp($data);
-        $data = $dom->getNodeValue('dhRecbto');
-        $aResp['tsdhrecbto'] = DateTime::convertSefazTimeToTimestamp($data);
-        $aResp['chave'] = $aResp['chNFe'];
-        $aResp['anomes'] = date('Ym', $aResp['tsdhemi']);
-        $aResp['xml'] = $dom->saveXML();
+        $xmldata = $dom->saveXML();
+        $xmldata = str_replace(
+            '<?xml version="1.0"?>',
+            '<?xml version="1.0" encoding="utf-8"?>',
+            $xmldata
+        );
+        $anomes = date('Ym', DateTime::convertSefazTimeToTimestamp($dom->getNodeValue('dhEmi')));
+        $aResp[] = array(
+            'chNFe' => $dom->getNodeValue('chNFe'),
+            'cnpj' => $dom->getNodeValue('CNPJ'),
+            'cpf' => $dom->getNodeValue('CPF'),
+            'xNome' => $dom->getNodeValue('xNome'),
+            'tpNF' => $dom->getNodeValue('tpNF'),
+            'vNF' => $dom->getNodeValue('vNF'),
+            'digval' => $dom->getNodeValue('digVal'),
+            'nprot' => $dom->getNodeValue('nProt'),
+            'cSitNFe' => $dom->getNodeValue('cSitNFe'),
+            'dhEmi' => $dom->getNodeValue('dhEmi'),
+            'dhRecbto' => $dom->getNodeValue('dhRecbto'),
+            'chave' => $dom->getNodeValue('chNFe'),
+            'anomes' => $anomes,
+            'xml' => $xmldata
+        );
         return $aResp;
     }
     
+    /**
+     * zTrataProcNFe
+     * @param array $resp
+     * @return array
+     */
     private static function zTrataProcNFe($resp = array())
     {
         $content = $resp['doc'];
@@ -267,7 +282,7 @@ class DFe
     }
     
     /**
-     * 
+     * zTrataProcEvent
      * @param array $resp
      */
     private static function zTrataProcEvent($resp = array())
@@ -296,7 +311,12 @@ class DFe
         return array();
     }
     
-    public static function manifesta($chNFe = '', $tpEvento = '210210')
+    /**
+     * manifesta
+     * @param string $chNFe
+     * @param string $tpEvento
+     */
+    public function manifesta($chNFe = '', $tpEvento = '210210')
     {
         $aRetorno = array();
         $xJust = '';
@@ -307,6 +327,14 @@ class DFe
             $tpEvento,
             $aRetorno
         );
+        $cStat = $aRetorno['evento'][0]['cStat'];
+        if ($cStat == 135 || $cStat == 573) {
+            $path = $this->pathRes.DIRECTORY_SEPARATOR.$chNFe.'-resNFe.xml';
+            if (is_file($path)) {
+                unlink($path);
+            }
+        }
+        return $aRetorno;
     }
     
     /**

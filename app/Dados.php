@@ -21,6 +21,51 @@ class Dados
 {
     public static $nCanc = 0;
     
+    public static function extraiResumo($aList)
+    {
+        $aResp = array();
+        foreach ($aList as $file) {
+            $dom = null;
+            $ide = null;
+            $emit = null;
+            $dest = null;
+            try {
+                $dom = new Dom();
+                $dom->loadXMLFile($file);
+                $dataemi = date('d/m/Y', DateTime::convertSefazTimeToTimestamp($dom->getNodeValue('dhEmi')));
+                $aResp[] = array(
+                    'chNFe' => $dom->getNodeValue('chNFe'),
+                    'cnpj' => $dom->getNodeValue('CNPJ'),
+                    'cpf' => $dom->getNodeValue('CPF'),
+                    'xNome' => $dom->getNodeValue('xNome'),
+                    'tpNF' => $dom->getNodeValue('tpNF'),
+                    'vNF' => $dom->getNodeValue('vNF'),
+                    'digval' => $dom->getNodeValue('digVal'),
+                    'nprot' => $dom->getNodeValue('nProt'),
+                    'cSitNFe' => $dom->getNodeValue('cSitNFe'),
+                    'dhEmi' => $dataemi,
+                    'dhRecbto' => $dom->getNodeValue('dhRecbto')
+                );
+            } catch (RuntimeException $e) {
+                $aResp[] = array(
+                    'chNFe' => '',
+                    'cnpj' => '',
+                    'cpf' => '',
+                    'xNome' => $file,
+                    'tpNF' => '',
+                    'vNF' => '',
+                    'digval' => '',
+                    'nprot' => '',
+                    'cSitNFe' => '3',
+                    'dhEmi' => '',
+                    'dhRecbto' => ''
+                );
+                
+            }
+        }
+        return $aResp;
+    }
+    
     public static function extrai($aList, $cnpj = '')
     {
         $aResp = array();
