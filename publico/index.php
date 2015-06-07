@@ -262,11 +262,12 @@ $html = "<!DOCTYPE html>
             OpenWindowWithPost(url, specs, name, param);		
         }
         function openmanifestar() {
-            var url = 'manifestar.php';
-            var name = 'page';
-            var specs = 'scrollbars=yes,menubar=yes,resizable=yes,toolbar=yes,status=yes';
-            var param = {};
-            OpenWindowWithPost(url, specs, name, param);
+            window.open(\"manifestar.php\",\"_self\",false);
+            //var url = 'manifestar.php';
+            //var name = 'page';
+            //var specs = 'scrollbars=yes,menubar=yes,resizable=yes,toolbar=yes,status=yes';
+            //var param = {};
+            //OpenWindowWithPost(url, specs, name, param);
         }
     </script>
         <div class=\"container\">

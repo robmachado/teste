@@ -103,7 +103,6 @@ $html = "<!DOCTYPE html>
                 }
             }
             var param = {'lista' : lista};
-            //var param = { 'chave' : chave, 'xml' : dest, 'address' : address };
             OpenWindowWithPost(url, specs, name, param);		
         }
         </script>
