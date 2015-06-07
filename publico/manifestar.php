@@ -90,7 +90,6 @@ $html = "<!DOCTYPE html>
             document.body.removeChild(form);
         }
         function manifestar() {
-            //alert('aqui');
             var url = 'manifestarmarcadas.php';
             var name = 'page';
             var lista = [];
@@ -111,7 +110,12 @@ $html = "<!DOCTYPE html>
     </head>
     <body>
     <div class=\"container\">
-    $lista
+        <center>
+        <h2>Resumos de Notas</h2>
+        <h3>Estas notas foram emitidas contra nós e podem ser maifestadas para permitir seu download</h3>
+        <h3>Selecione e manifeste a ciencia dessa operação.</h3>
+        $lista
+        </center>    
     </div>
     </body>
 </html>";

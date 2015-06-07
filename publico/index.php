@@ -261,6 +261,13 @@ $html = "<!DOCTYPE html>
             var param = { 'chave' : chave, 'xml' : dest, 'address' : address };
             OpenWindowWithPost(url, specs, name, param);		
         }
+        function openmanifestar() {
+            var url = 'manifestar.php';
+            var name = 'page';
+            var specs = 'scrollbars=yes,menubar=yes,resizable=yes,toolbar=yes,status=yes';
+            var param = {};
+            OpenWindowWithPost(url, specs, name, param);
+        }
     </script>
         <div class=\"container\">
             <div class=\"left\"><img src=\"images/nfephplogo.jpg\" alt=\"logo\" height=\"62\"></div>
@@ -280,7 +287,7 @@ $html = "<!DOCTYPE html>
                     <label>Mês</label><br>$selMeses
                     </div>
                     <br>
-                    <input type=\"submit\" value=\"Buscar as Notas\" name=\"B1\">
+                    <input type=\"submit\" value=\"Buscar as Notas\" name=\"B1\"><input type=\"button\" value=\"Listar Resumos das NFe's\" name=\"B2\" onClick=\"openmanifestar();\">
                 </form>
             </div>
         </div>
