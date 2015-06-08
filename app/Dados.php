@@ -26,9 +26,6 @@ class Dados
         $aResp = array();
         foreach ($aList as $file) {
             $dom = null;
-            $ide = null;
-            $emit = null;
-            $dest = null;
             try {
                 $dom = new Dom();
                 $dom->loadXMLFile($file);
@@ -104,7 +101,7 @@ class Dados
                 $destRazao = $dom->getValue($dest, 'xNome');
                 $vNF = $dom->getValue($icmsTot, 'vNF');
                 $vNFtext = $vNF;
-                if (is_float($vNF)) {
+                if (is_numeric($vNF)) {
                     $vNFtext = 'R$ '.number_format($vNF, '2', ',', '.');
                 }
                 $serie = $dom->getNodeValue('serie');
