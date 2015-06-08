@@ -62,7 +62,7 @@ class DFe
      */
     public function getNSU()
     {
-        $file = $this->nsuFilePath . $this->nsuFileName;
+        $file = $this->nsuFilePath . DIRECTORY_SEPARATOR . $this->nsuFileName;
         if (! is_file($file)) {
             $aNSU = array('ultNSU' => 0, 'maxNSU' => 0);
             $nsuJson = json_encode($aNSU);
