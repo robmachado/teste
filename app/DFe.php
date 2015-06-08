@@ -41,7 +41,7 @@ class DFe
         $this->tools->setModelo('55');
         //caso a versão do PHP não possa identificar automaticamente
         //o protocolo a ser usado durante o handshake. Defina o protocolo.
-        //$this->tools->setSSLProtocol('SSLv3');
+        $this->tools->setSSLProtocol('SSLv3');
         
         $this->ambiente = $this->tools->ambiente;
         $this->pathNFe = $this->tools->aConfig['pathNFeFiles'];
@@ -328,7 +328,7 @@ class DFe
             $aRetorno
         );
         $cStat = $aRetorno['evento'][0]['cStat'];
-        if ($cStat == 135 || $cStat == 573) {
+        if ($cStat == 135 || $cStat == 573 || $cStat == 650) {
             $path = $this->pathRes.DIRECTORY_SEPARATOR.$chNFe.'-resNFe.xml';
             if (is_file($path)) {
                 unlink($path);
