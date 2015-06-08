@@ -36,11 +36,10 @@ $dfe = new DFe('../config/config.json');
 $aInv = array_flip($aLista);
 foreach ($aLista as $res) {
     $aResp = $dfe->manifesta($res);
-    $aInv[$res] = 'Processado';
-    $aInv[$res] = 'Falha evento não vinculado';
     $cStat = $aResp['evento'][0]['cStat'];
+    $aInv[$res] = "Falha evento não vinculado - $cStat";
     if ($cStat == 135 || $cStat == 573) {
-        $aInv[$res] = 'Processado';
+        $aInv[$res] = "Processado  - $cStat";
     }
 }
 
