@@ -95,12 +95,18 @@ class Dados
                 }
                 //echo $file.'___'.$dhEmi.'<br>';
                 $tsEmi = DateTime::convertSefazTimeToTimestamp($dhEmi);
-                $data = date('d/m/Y', $tsEmi);
+                $data = '';
+                if (is_numeric($tsEmi)) {
+                    $data = date('d/m/Y', $tsEmi);
+                }
                 $emitCNPJ = $dom->getValue($emit, 'CNPJ');
                 $emitRazao = $dom->getValue($emit, 'xNome');
                 $destRazao = $dom->getValue($dest, 'xNome');
                 $vNF = $dom->getValue($icmsTot, 'vNF');
-                $vNFtext = 'R$ '.number_format($vNF, '2', ',', '.');
+                $vNFtext = $vNF;
+                if (is_float($vNF)) {
+                    $vNFtext = 'R$ '.number_format($vNF, '2', ',', '.');
+                }
                 $serie = $dom->getNodeValue('serie');
                 $nProt = $dom->getNodeValue('nProt');
                 $nome = $emitRazao;

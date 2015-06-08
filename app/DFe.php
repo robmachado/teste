@@ -28,7 +28,7 @@ class DFe
     public $tools;
     public $ultNSU = 0;
     public $maxNSU = 0;
-    public $nsuFilePath = '';
+    public $nsuFilePath = '../base';
     public $nsuFileName = 'nsu.json';
     public $ambiente = 'homologacao';
     public $pathNFe = '';
