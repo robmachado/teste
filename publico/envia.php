@@ -23,7 +23,7 @@ include_once '../bootstrap.php';
  */
 
 use App\Mail;
-use NFePHP\Extras\DanfeNFePHP;
+use NFePHP\Extras\Danfe;
 use NFePHP\Common\Files\FilesFolders;
 
 $chave = isset($_POST['chave']) ? $_POST['chave'] : '';
@@ -44,7 +44,7 @@ if ($comPdf === '1') {
         $logo = '';
     }
     $docxml = FilesFolders::readFile($xml);
-    $danfe = new DanfeNFePHP($docxml, 'P', 'A4', $logo, 'I', '');
+    $danfe = new Danfe($docxml, 'P', 'A4', $logo, 'I', '');
     $id = $danfe->montaDANFE();
     $pathPdf = '../base/'.$id.'.pdf';
     $pdf = $danfe->printDANFE($pathPdf, 'F');

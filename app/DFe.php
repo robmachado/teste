@@ -151,7 +151,7 @@ class DFe
      * @param array $aDocs
      * @param boolean $bIncludeAnomes
      */
-    protected function zSalva($aDocs = array(), $dir = 'recebidas', $bIncludeAnomes = false)
+    protected function zSalva($aDocs = array(), $dir = 'recebidas', $name = '-nfe.xml', $bIncludeAnomes = false)
     {
         if (empty($aDocs)) {
             return;
@@ -161,10 +161,6 @@ class DFe
             $this->ambiente .
             DIRECTORY_SEPARATOR .
             $dir;
-        $name = '-nfe.xml';
-        if ($dir != 'recebidas') {
-            $name = '-resNFe.xml';
-        }
         foreach ($aDocs as $doc) {
             $anomes = $doc['anomes'];
             $chave =  $doc['chave'];
@@ -198,11 +194,11 @@ class DFe
                 case 'resNFe':
                     $aDocs = self::zTrataResNFe($resp);
                     //mostar as notas resumo e manifestar
-                    $this->zSalva($aDocs, 'recebidas/resumo', false);
+                    $this->zSalva($aDocs, 'recebidas/resumo', '-resNFe.xml', false);
                     break;
                 case 'procNF':
                     $aDocs = self::zTrataProcNFe($resp);
-                    $this->zSalva($aDocs, 'recebidas', $bIncludeAnomes);
+                    $this->zSalva($aDocs, 'recebidas', '-nfe.xml', $bIncludeAnomes);
                     break;
                 case 'procEv':
                     $aResp = self::zTrataProcEvent($resp);
@@ -287,9 +283,11 @@ class DFe
      */
     private static function zTrataProcEvent($resp = array())
     {
+        $aResp = array();
         $content = $resp['doc'];
         $dom = new Dom();
         $dom->loadXMLString($content);
+        $xmldata = $dom->saveXML();
         $data = $dom->getNodeValue('dhEvento');
         $tsdhevento = DateTime::convertSefazTimeToTimestamp($data);
         $anomes = date('Ym', $tsdhevento);
@@ -307,8 +305,13 @@ class DFe
                 $anomes;
             $pathFile = $path . DIRECTORY_SEPARATOR . $chave . '-nfe.xml';
             self::zCancela($pathFile);
+            $aResp[] = array(
+                'chave' => $chave,
+                'anomes' => $anomes,
+                'xml' => $xmldata
+            );
         }
-        return array();
+        return $aResp;
     }
     
     /**

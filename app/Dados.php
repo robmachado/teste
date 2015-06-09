@@ -27,6 +27,10 @@ class Dados
         foreach ($aList as $file) {
             $dom = null;
             try {
+                //podem ser xml com 
+                //resumo
+                //cancelamento
+                //carta de correção
                 $dom = new Dom();
                 $dom->loadXMLFile($file);
                 $dataemi = date('d/m/Y', DateTime::convertSefazTimeToTimestamp($dom->getNodeValue('dhEmi')));
