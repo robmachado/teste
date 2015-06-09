@@ -151,7 +151,7 @@ class DFe
      * @param array $aDocs
      * @param boolean $bIncludeAnomes
      */
-    protected function zSalva($aDocs = array(), $dir = 'recebidas', $name = '-nfe.xml', $bIncludeAnomes = false)
+    protected function zSalva($aDocs = array(), $dir = 'recebidas', $bIncludeAnomes = false)
     {
         if (empty($aDocs)) {
             return;
@@ -165,6 +165,7 @@ class DFe
             $anomes = $doc['anomes'];
             $chave =  $doc['chave'];
             $xml = $doc['xml'];
+            $name = $doc['tipo'];
             $pathnfe = $path;
             if ($bIncludeAnomes) {
                 $pathnfe = $path.DIRECTORY_SEPARATOR.$anomes;
@@ -194,14 +195,15 @@ class DFe
                 case 'resNFe':
                     $aDocs = self::zTrataResNFe($resp);
                     //mostar as notas resumo e manifestar
-                    $this->zSalva($aDocs, 'recebidas/resumo', '-resNFe.xml', false);
+                    $this->zSalva($aDocs, 'recebidas/resumo', false);
                     break;
                 case 'procNF':
                     $aDocs = self::zTrataProcNFe($resp);
-                    $this->zSalva($aDocs, 'recebidas', '-nfe.xml', $bIncludeAnomes);
+                    $this->zSalva($aDocs, 'recebidas', $bIncludeAnomes);
                     break;
                 case 'procEv':
-                    $aResp = self::zTrataProcEvent($resp);
+                    $aDocs = self::zTrataProcEvent($resp);
+                    //$this->zSalva($aDocs, 'recebidas/resumo', $bIncludeAnomes);
                     break;
             }
         }
@@ -228,6 +230,7 @@ class DFe
         );
         $anomes = date('Ym', DateTime::convertSefazTimeToTimestamp($dom->getNodeValue('dhEmi')));
         $aResp[] = array(
+            'tipo' => '-resNFe.xml',
             'chNFe' => $dom->getNodeValue('chNFe'),
             'cnpj' => $dom->getNodeValue('CNPJ'),
             'cpf' => $dom->getNodeValue('CPF'),
@@ -270,6 +273,7 @@ class DFe
             $xmldata
         );
         $aResp[] = array(
+            'tipo' => '-nfe.xml',
             'chave' => $chave,
             'anomes' => $anomes,
             'xml' => $xmldata
@@ -288,6 +292,11 @@ class DFe
         $dom = new Dom();
         $dom->loadXMLString($content);
         $xmldata = $dom->saveXML();
+        $xmldata = str_replace(
+            '<?xml version="1.0"?>',
+            '<?xml version="1.0" encoding="utf-8"?>',
+            $xmldata
+        );
         $data = $dom->getNodeValue('dhEvento');
         $tsdhevento = DateTime::convertSefazTimeToTimestamp($data);
         $anomes = date('Ym', $tsdhevento);
@@ -306,6 +315,15 @@ class DFe
             $pathFile = $path . DIRECTORY_SEPARATOR . $chave . '-nfe.xml';
             self::zCancela($pathFile);
             $aResp[] = array(
+                'tipo' => '-cancNFe.xml',
+                'chave' => $chave,
+                'anomes' => $anomes,
+                'xml' => $xmldata
+            );
+        } elseif ($tpEvento == '110110') {
+            //evento Carta de Correção
+            $aResp[] = array(
+                'tipo' => '-cce.xml',
                 'chave' => $chave,
                 'anomes' => $anomes,
                 'xml' => $xmldata

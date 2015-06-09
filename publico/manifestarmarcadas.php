@@ -35,12 +35,17 @@ $path = $objConfig->pathNFeFiles.DIRECTORY_SEPARATOR.$ambiente.DIRECTORY_SEPARAT
 $dfe = new DFe('../config/config.json');
 $aInv = array_flip($aLista);
 foreach ($aLista as $res) {
-    $aResp = $dfe->manifesta($res);
-    $cStat = $aResp['evento'][0]['cStat'];
-    $aInv[$res] = "Falha evento não vinculado - $cStat";
-    if ($cStat == 135 || $cStat == 573) {
-        $aInv[$res] = "Processado  - $cStat";
-    }
+    //a lista pode conter varios tipos de arquivos
+    //se for uma chave de 44 digitos manifestar
+    //caso não seja isso então é um nome de arquivo então remover apenas
+    if (is_numeric($res)) {
+        $aResp = $dfe->manifesta($res);
+        $cStat = $aResp['evento'][0]['cStat'];
+        $aInv[$res] = "Falha evento não vinculado - $cStat";
+        if ($cStat == 135 || $cStat == 573) {
+            $aInv[$res] = "Processado  - $cStat";
+        }
+    }    
 }
 
 ?>

@@ -27,26 +27,64 @@ class Dados
         foreach ($aList as $file) {
             $dom = null;
             try {
-                //podem ser xml com 
-                //resumo
-                //cancelamento
-                //carta de correção
+                //podem ser xml com
+                //resumo *-resNFe.xml
+                //cancelamento *-cancNFe.xml
+                //carta de correção *-cce.xml
+                $pos = explode('-', $file);
                 $dom = new Dom();
                 $dom->loadXMLFile($file);
-                $dataemi = date('d/m/Y', DateTime::convertSefazTimeToTimestamp($dom->getNodeValue('dhEmi')));
-                $aResp[] = array(
-                    'chNFe' => $dom->getNodeValue('chNFe'),
-                    'cnpj' => $dom->getNodeValue('CNPJ'),
-                    'cpf' => $dom->getNodeValue('CPF'),
-                    'xNome' => $dom->getNodeValue('xNome'),
-                    'tpNF' => $dom->getNodeValue('tpNF'),
-                    'vNF' => $dom->getNodeValue('vNF'),
-                    'digval' => $dom->getNodeValue('digVal'),
-                    'nprot' => $dom->getNodeValue('nProt'),
-                    'cSitNFe' => $dom->getNodeValue('cSitNFe'),
-                    'dhEmi' => $dataemi,
-                    'dhRecbto' => $dom->getNodeValue('dhRecbto')
-                );
+                switch ($pos[1]) {
+                    case '-resNFe.xml':
+                        $dataemi = date('d/m/Y', DateTime::convertSefazTimeToTimestamp($dom->getNodeValue('dhEmi')));
+                        $aResp[] = array(
+                            'tipo' => 'NFe',
+                            'chNFe' => $dom->getNodeValue('chNFe'),
+                            'cnpj' => $dom->getNodeValue('CNPJ'),
+                            'cpf' => $dom->getNodeValue('CPF'),
+                            'xNome' => $dom->getNodeValue('xNome'),
+                            'tpNF' => $dom->getNodeValue('tpNF'),
+                            'vNF' => $dom->getNodeValue('vNF'),
+                            'digval' => $dom->getNodeValue('digVal'),
+                            'nprot' => $dom->getNodeValue('nProt'),
+                            'cSitNFe' => $dom->getNodeValue('cSitNFe'),
+                            'dhEmi' => $dataemi,
+                            'dhRecbto' => $dom->getNodeValue('dhRecbto')
+                        );
+                        break;
+                    case '-cancNFe.xml':
+                        $aResp[] = array(
+                            'tipo' => 'Cancelamento',
+                            'chNFe' => $file,
+                            'cnpj' => '',
+                            'cpf' => '',
+                            'xNome' => 'Cancelamento',
+                            'tpNF' => '',
+                            'vNF' => '',
+                            'digval' => '',
+                            'nprot' => '',
+                            'cSitNFe' => '',
+                            'dhEmi' => '',
+                            'dhRecbto' => ''
+                        );
+                        break;
+                    case '-cce.xml':
+                        $aResp[] = array(
+                            'tipo' => 'CCe',
+                            'chNFe' => $file,
+                            'cnpj' => '',
+                            'cpf' => '',
+                            'xNome' => 'CCe',
+                            'tpNF' => '',
+                            'vNF' => '',
+                            'digval' => '',
+                            'nprot' => '',
+                            'cSitNFe' => '',
+                            'dhEmi' => '',
+                            'dhRecbto' => ''
+                        );
+                        break;
+                }
             } catch (RuntimeException $e) {
                 $aResp[] = array(
                     'chNFe' => '',
