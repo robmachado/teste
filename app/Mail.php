@@ -44,6 +44,7 @@ class Mail
         if (! is_file($fileNfePath)) {
             return '';
         }
+        $addresses = str_replace(',', ';', $addresses);
         if (! is_array($addresses)) {
             $aPara = explode(';', $addresses);
         } else {
