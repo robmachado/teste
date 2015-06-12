@@ -35,7 +35,7 @@ class Dados
                 $dom = new Dom();
                 $dom->loadXMLFile($file);
                 switch ($pos[1]) {
-                    case '-resNFe.xml':
+                    case 'resNFe.xml':
                         $dataemi = date('d/m/Y', DateTime::convertSefazTimeToTimestamp($dom->getNodeValue('dhEmi')));
                         $aResp[] = array(
                             'tipo' => 'NFe',
@@ -52,7 +52,7 @@ class Dados
                             'dhRecbto' => $dom->getNodeValue('dhRecbto')
                         );
                         break;
-                    case '-cancNFe.xml':
+                    case 'cancNFe.xml':
                         $aResp[] = array(
                             'tipo' => 'Cancelamento',
                             'chNFe' => $file,
@@ -68,7 +68,7 @@ class Dados
                             'dhRecbto' => ''
                         );
                         break;
-                    case '-cce.xml':
+                    case 'cce.xml':
                         $aResp[] = array(
                             'tipo' => 'CCe',
                             'chNFe' => $file,

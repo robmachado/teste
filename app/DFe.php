@@ -137,7 +137,7 @@ class DFe
                 $this->ultNSU = (int) $aResposta['ultNSU'];
                 $this->maxNSU = (int) $aResposta['maxNSU'];
                 $this->putNSU($this->ultNSU, $this->maxNSU);
-                $this->zExtractDocs($aResposta['aDoc'], $bIncludeAnomes = false);
+                $this->zExtractDocs($aResposta['aDoc'], $bIncludeAnomes);
             }
             sleep(5);
         }
