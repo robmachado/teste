@@ -122,6 +122,7 @@ class Dados
                 $ide = $dom->getNode('ide');
                 $emit = $dom->getNode('emit');
                 $dest = $dom->getNode('dest');
+                $fat = $dom->getNode('fat');
                 $icmsTot = $dom->getNode('ICMSTot');
                 $vol = $dom->getNode('vol');
                 $cStat = $dom->getNodeValue('cStat');
@@ -168,8 +169,11 @@ class Dados
                 $vICMS = $dom->getValue($icmsTot, 'vICMS');
                 $totIcms += $vICMS;
                 $valorFat = 0;
-                if ($vICMS != 0 && $cStat == '100') {
-                    $valorFat = $vNF;
+                if ($cStat == '100' || $cStat == '150') {
+                    $valorFat = $dom->getValue($fat, 'vLiq');
+                    if (! is_numeric($valorFat)) {
+                        $valorFat = 0;
+                    }
                 }
                 $totFat += $valorFat;
                 $pesoL = $dom->getValue($vol, 'pesoL');

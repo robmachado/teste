@@ -5,9 +5,9 @@ include_once '../bootstrap.php';
 
 /**
  * Rotina de impressão da DANFE
- * 
+ *
  * Esta rotina recebe como parâmetro o caminho para xml da NFe compactado e codificado em Base64
- * 
+ *
  * @category   Application
  * @package    robmachado\teste
  * @copyright  Copyright (c) 2008-2015
@@ -33,3 +33,4 @@ $docxml = FilesFolders::readFile($xml);
 $danfe = new Danfe($docxml, 'P', 'A4', $logo, 'I', '');
 $id = $danfe->montaDANFE();
 $teste = $danfe->printDANFE($id.'.pdf', 'I');
+
