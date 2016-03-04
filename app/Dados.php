@@ -189,6 +189,7 @@ class Dados
                     'cStat' => $cStat,
                     'vNF' => $vNFtext,
                     'nProt' => $nProt,
+                    'valorFat' => ($valorFat == 0) ? '' : 'R$ '.number_format($valorFat, '2', ',', '.'),
                     'email' => $email
                 );
             } catch (RuntimeException $e) {
@@ -201,6 +202,7 @@ class Dados
                     'cStat' => '',
                     'vNF' => 0,
                     'nProt' => '',
+                    'valorFat' => '',
                     'email' => ''
                 );
             }

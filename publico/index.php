@@ -164,7 +164,7 @@ if (count($aDados['aNF']) > 0) {
             <td class=\"center\">".$dado['data']."</td>
             <td class=\"left email\">$clickMail</td>
             <td class=\"right\" width=\"10%\">".$dado['vNF']."</td>
-            <td class=\"center\">".$dado['nProt'].'-'.$dado['cStat']."</td>   
+            <td class=\"right\">".$dado['valorFat']."</td>   
             <td class=\"left\"><a href=\"#\" onClick=\"openXml('$gzPath');\">".$dado['natureza']."</a></td>
             </tr>\n";
         $htmlNotas .= $htmlLinhaNota;
@@ -306,7 +306,7 @@ $html = "<!DOCTYPE html>
                     <th class=\"border\" data-sort=\"string\">Data</th>
                     <th class=\"border\" data-sort=\"string\">Destinatário/Emitente</th>
                     <th class=\"border\" data-sort=\"valor\" width=\"10%\">Valor</th>
-                    <th class=\"border\">Protocolo</th>
+                    <th class=\"border\" data-sort=\"valor\">Fatura</th>
                     <th class=\"border\" data-sort=\"string\">Natureza da Operação</th>
                 </tr>
                 </thead>
