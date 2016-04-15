@@ -31,7 +31,8 @@ class Dados
                 //resumo *-resNFe.xml
                 //cancelamento *-cancNFe.xml
                 //carta de correção *-cce.xml
-                $pos = explode('-', $file);
+                $tmp = explode('/', $file);
+                $pos = explode('-',end($tmp));
                 $dom = new Dom();
                 $dom->loadXMLFile($file);
                 switch ($pos[1]) {
