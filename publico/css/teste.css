@@ -116,3 +116,6 @@ div.right{
     margin-right: auto;
     width: 98%;    
 }
+
+tr:nth-child(even) {background: #ddd
+}

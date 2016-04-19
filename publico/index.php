@@ -202,6 +202,7 @@ $html = "<!DOCTYPE html>
                     return aVal - bVal;
                 }
             });
+            table.find('th').eq(2).click(); // ordenação padrão por data
             table.on(\"beforetablesort\", function (event, data) {
                 // Apply a \"disabled\" look to the table while sorting.
                 // Using addClass for testing as it takes slightly longer to render.
