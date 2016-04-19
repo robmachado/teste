@@ -149,7 +149,7 @@ $html = "<!DOCTYPE html>
             var x = 0;
             var specs = 'scrollbars=no,menubar=no,height=260,width=650,resizable=yes,toolbar=no,status=no';
             var checkboxes = document.getElementsByName('chk');
-            for (var i= 0; i < checkboxes.length; i++) {stupid
+            for (var i= 0; i < checkboxes.length; i++) {
                 if (checkboxes[i].checked) {
                     lista[x] = checkboxes[i].value;
                     x++;
