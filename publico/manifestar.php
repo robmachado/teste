@@ -51,6 +51,7 @@ $lista .= '<table width="75%"><thead><tr><th>&nbsp;</th>
            <th class="border" data-sort="date">Data</th>
            <th class="border" data-sort="valor">Valor</th></tr></thead>'."\n".'<tbody>';
 $iCount = 0;
+$count = count($aDados);
 foreach ($aDados as $res) {
     $chkChave = "chk";
     $lista .= '<tr class=\"dados\">'
@@ -102,6 +103,7 @@ $html = "<!DOCTYPE html>
                     return aDate - bDate;
                 }
             });
+            table.find('th').eq(3).click(); // ordenação padrão por data
             table.on(\"beforetablesort\", function (event, data) {
                 // Apply a \"disabled\" look to the table while sorting.
                 // Using addClass for testing as it takes slightly longer to render.
@@ -147,7 +149,7 @@ $html = "<!DOCTYPE html>
             var x = 0;
             var specs = 'scrollbars=no,menubar=no,height=260,width=650,resizable=yes,toolbar=no,status=no';
             var checkboxes = document.getElementsByName('chk');
-            for (var i= 0; i < checkboxes.length; i++) {
+            for (var i= 0; i < checkboxes.length; i++) {stupid
                 if (checkboxes[i].checked) {
                     lista[x] = checkboxes[i].value;
                     x++;
@@ -162,8 +164,8 @@ $html = "<!DOCTYPE html>
     <div class=\"container\">
         <center>
         <h2>Resumos de Notas</h2>
-        <h3>Estas notas foram emitidas contra nós e podem ser maifestadas para permitir seu download</h3>
-        <h3>Selecione e manifeste a ciencia dessa operação.</h3>
+        <h3>Estas notas foram emitidas contra nós e podem ser manifestadas para permitir seu download, num total de $count.</h3>
+        <h3>Selecione e manifeste a ciência dessa operação.</h3>
         $lista
         </center>    
     </div>
