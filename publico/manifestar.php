@@ -45,7 +45,11 @@ try {
 
 $aDados = Dados::extraiResumo($aList);
 $lista = '<form>';
-$lista .= '<table width="75%"><thead><tr><th></th><th class=\"border\" data-sort=\"int\">NFe Número</th><th class=\"border\" data-sort=\"string\">Emitente</th><th class=\"border\" data-sort=\"string\">Data</th><th>Valor</th></tr></thead><tbody>';
+$lista .= '<table width="75%"><thead><tr><th>&nbsp;</th>
+           <th class="border" data-sort="int">NFe Número</th>
+           <th class="border" data-sort="string-ins">Emitente</th>
+           <th class="border" data-sort="date">Data</th>
+           <th class="border" data-sort="valor">Valor</th></tr></thead>'."\n".'<tbody>';
 $iCount = 0;
 foreach ($aDados as $res) {
     $chkChave = "chk";
@@ -55,10 +59,9 @@ foreach ($aDados as $res) {
             . '<td class="left">'.$res['xNome'].'</td>'
             . '<td class="center">'.$res['dhEmi'].'</td>'
             . '<td class="right">R$ '.number_format($res['vNF'], 2, ',', '.').'</td>'
-            . '</tr>';
+            . '</tr>'."\n";
 }
-$lista .= '<tr><td colspan="4"><input type="button" value="Manifestar" onClick="manifestar();"></td></tr>';
-$lista .= '</tbody></table></form>';
+$lista .= '</tbody></table><input type="button" value="Manifestar" onClick="manifestar();"></form>';
 
 $html = "<!DOCTYPE html>
 <html>
@@ -81,12 +84,22 @@ $html = "<!DOCTYPE html>
                 var valor = parseInt(newstr)*100;
                 return valor;
             }
+            var date_from_string = function(str) {
+                var parts = str.split(\"/\");
+                return new Date(parts[2],parts[1],parts[0]);
+            }
             var table = $(\"table\").stupidtable({
                 \"valor\": function(a,b) {
                     // Get these into int objects for comparison.
                     aVal = valor_from_string(a);
                     bVal = valor_from_string(b);
                     return aVal - bVal;
+                },
+                \"date\": function(a,b){
+                // Get these into date objects for comparison.
+                    aDate = date_from_string(a);
+                    bDate = date_from_string(b);
+                    return aDate - bDate;
                 }
             });
             table.on(\"beforetablesort\", function (event, data) {
@@ -158,3 +171,4 @@ $html = "<!DOCTYPE html>
 </html>";
 
 echo $html;
+?>
